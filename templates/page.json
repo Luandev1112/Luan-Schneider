@@ -67,7 +67,7 @@
           "settings": {
             "block_title": "The Gift Guide",
             "block_title_color": "#000000",
-            "block_title_font_size": 48
+            "block_title_font_size": 70
           }
         },
         "text_q7diq9": {
@@ -75,7 +75,7 @@
           "settings": {
             "block_text": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
             "block_text_color": "#000000",
-            "block_text_font_size": 16
+            "block_text_font_size": 20
           }
         },
         "button_MExEAf": {
@@ -96,7 +96,7 @@
       "name": "Test Hero",
       "settings": {
         "hero_image": "shopify://shop_images/Group_1000008197.png",
-        "hero_content_max_width": 420,
+        "hero_content_max_width": 490,
         "hero_content_vertical_position": "bottom",
         "hero_content_horizontal_position": "left"
       }
