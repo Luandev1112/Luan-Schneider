@@ -95,7 +95,10 @@
       ],
       "name": "Test Hero",
       "settings": {
-        "hero_image": "shopify://shop_images/Group_1000008197.png"
+        "hero_image": "shopify://shop_images/Group_1000008197.png",
+        "hero_content_max_width": 420,
+        "hero_content_vertical_position": "bottom",
+        "hero_content_horizontal_position": "left"
       }
     }
   },
