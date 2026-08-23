@@ -59,10 +59,15 @@
                     <a
                         href="{{ block.settings.button_link | default: '#' }}"
                         class="test-hero__button"
-                        style="color: {{ block.settings.button_color }}; font-size: {{ block.settings.button_font_size }}px;"
+                        style="color: {{ block.settings.button_color }}; background-color: {{ block.settings.button_background_color }}; font-size: {{ block.settings.button_font_size }}px;"
                         {{ block.shopify_attributes }}
                     >
                         {{ block.settings.button_text }}
+                        {% if block.settings.button_show_icon %}
+                            <span class="test-hero__button-icon">
+                                {% render 'arrow-icon' %}
+                            </span>
+                        {% endif %}
                     </a>
             {% endcase %}
         {% endfor %}
@@ -113,10 +118,18 @@
     }
 
     .test-hero__button {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         text-decoration: none;
         border: 1px solid currentColor;
         padding: 12px 24px;
+    }
+
+    .test-hero__button-icon {
+        display: inline-flex;
+        align-items: center;
+        text-transform: uppercase;
     }
 {% endstylesheet %}
 
@@ -273,7 +286,13 @@
                     "type": "color",
                     "id": "button_color",
                     "default": "#000000",
-                    "label": "Button Color"
+                    "label": "Button Label Color"
+                },
+                {
+                    "type": "color",
+                    "id": "button_background_color",
+                    "default": "#00000000",
+                    "label": "Button Background Color"
                 },
                 {
                     "type": "range",
@@ -284,6 +303,12 @@
                     "max": 100,
                     "step": 1,
                     "unit": "px"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "button_show_icon",
+                    "label": "Show Icon",
+                    "default": true
                 }
             ]
         }
