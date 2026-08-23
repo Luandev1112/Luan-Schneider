@@ -31,6 +31,7 @@
         --test-hero-text-align: {{ horizontal_position }};
         --test-hero-content-max-width: {{ section.settings.hero_content_max_width }}px;
         --test-hero-image-height: {{ section.settings.hero_image_height }}vh;
+        --test-hero-image-height-mobile: {{ section.settings.hero_image_height_mobile }}vh;
     "
 >
     <div class="test-hero__image">
@@ -42,18 +43,20 @@
                 {% when 'title' %}
                     <h2
                         class="test-hero__title"
-                        style="color: {{ block.settings.block_title_color }}; font-size: {{ block.settings.block_title_font_size }}px;"
+                        style="color: {{ block.settings.block_title_color }};"
                         {{ block.shopify_attributes }}
                     >
-                        {{ block.settings.block_title }}
+                        <span class="test-hero__title-desktop" style="font-size: {{ block.settings.block_title_font_size }}px;">{{ block.settings.block_title }}</span>
+                        <span class="test-hero__title-mobile" style="font-size: {{ block.settings.block_title_font_size_mobile | default: block.settings.block_title_font_size }}px;">{{ block.settings.block_title_mobile | default: block.settings.block_title }}</span>
                     </h2>
                 {% when 'text' %}
                     <p
                         class="test-hero__text"
-                        style="color: {{ block.settings.block_text_color }}; font-size: {{ block.settings.block_text_font_size }}px;"
+                        style="color: {{ block.settings.block_text_color }};"
                         {{ block.shopify_attributes }}
                     >
-                        {{ block.settings.block_text }}
+                        <span class="test-hero__text-desktop" style="font-size: {{ block.settings.block_text_font_size }}px;">{{ block.settings.block_text }}</span>
+                        <span class="test-hero__text-mobile" style="font-size: {{ block.settings.block_text_font_size_mobile | default: block.settings.block_text_font_size }}px;">{{ block.settings.block_text_mobile | default: block.settings.block_text }}</span>
                     </p>
                 {% when 'button' %}
                     <a
@@ -117,6 +120,11 @@
         margin: 0;
     }
 
+    .test-hero__title-mobile,
+    .test-hero__text-mobile {
+        display: none;
+    }
+
     .test-hero__button {
         display: inline-flex;
         align-items: center;
@@ -152,7 +160,7 @@
             grid-area: image;
             position: relative;
             inset: auto;
-            height: var(--test-hero-image-height, 60vh);
+            height: var(--test-hero-image-height-mobile, 60vh);
         }
 
         .test-hero__content {
@@ -167,6 +175,16 @@
         .test-hero__text {
             grid-area: text;
             padding: 0 24px;
+        }
+
+        .test-hero__title-desktop,
+        .test-hero__text-desktop {
+            display: none;
+        }
+
+        .test-hero__title-mobile,
+        .test-hero__text-mobile {
+            display: inline;
         }
 
         .test-hero__button {
@@ -199,6 +217,16 @@
             "type": "range",
             "id": "hero_image_height",
             "label": "Hero Image Height",
+            "default": 60,
+            "min": 30,
+            "max": 100,
+            "step": 5,
+            "unit": "vh"
+        },
+        {
+            "type": "range",
+            "id": "hero_image_height_mobile",
+            "label": "Hero Image Height (Mobile)",
             "default": 60,
             "min": 30,
             "max": 100,
@@ -271,6 +299,12 @@
                     "label": "Block Title"
                 },
                 {
+                    "type": "text",
+                    "id": "block_title_mobile",
+                    "label": "Block Title (Mobile)",
+                    "info": "Leave blank to reuse the title above on mobile"
+                },
+                {
                     "type": "color",
                     "id": "block_title_color",
                     "label": "Title color",
@@ -281,6 +315,16 @@
                     "id": "block_title_font_size",
                     "label": "Block Title Font Size",
                     "default": 48,
+                    "min": 10,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px"
+                },
+                {
+                    "type": "range",
+                    "id": "block_title_font_size_mobile",
+                    "label": "Block Title Font Size (Mobile)",
+                    "default": 32,
                     "min": 10,
                     "max": 100,
                     "step": 1,
@@ -298,6 +342,12 @@
                     "label": "Block Text"
                 },
                 {
+                    "type": "text",
+                    "id": "block_text_mobile",
+                    "label": "Block Text (Mobile)",
+                    "info": "Leave blank to reuse the text above on mobile"
+                },
+                {
                     "type": "color",
                     "id": "block_text_color",
                     "label": "Text color",
@@ -308,6 +358,16 @@
                     "id": "block_text_font_size",
                     "label": "Block Text Font Size",
                     "default": 16,
+                    "min": 10,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px"
+                },
+                {
+                    "type": "range",
+                    "id": "block_text_font_size_mobile",
+                    "label": "Block Text Font Size (Mobile)",
+                    "default": 14,
                     "min": 10,
                     "max": 100,
                     "step": 1,
