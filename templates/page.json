@@ -81,8 +81,8 @@
         "button_MExEAf": {
           "type": "button",
           "settings": {
-            "button_text": "Button",
-            "button_link": "",
+            "button_text": "Shop Now",
+            "button_link": "shopify://collections",
             "button_color": "#000000",
             "button_font_size": 16
           }
