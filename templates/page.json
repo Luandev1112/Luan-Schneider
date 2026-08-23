@@ -104,7 +104,7 @@
         "hero_image": "shopify://shop_images/Group_1000008197.png",
         "hero_image_mobile": "shopify://shop_images/test-hero-image-for-mobile.png",
         "hero_image_height": 75,
-        "hero_image_height_mobile": 30,
+        "hero_image_height_mobile": 27,
         "hero_content_max_width": 490,
         "hero_content_vertical_position": "bottom",
         "hero_content_horizontal_position": "left"
