@@ -83,8 +83,10 @@
           "settings": {
             "button_text": "Shop Now",
             "button_link": "shopify://collections",
-            "button_color": "#000000",
-            "button_font_size": 16
+            "button_color": "#FFFFFF",
+            "button_background_color": "#000000",
+            "button_font_size": 16,
+            "button_show_icon": true
           }
         }
       },
