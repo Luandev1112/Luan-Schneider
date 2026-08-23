@@ -1,13 +1,39 @@
 {% liquid
     assign hero_image = section.settings.hero_image
+
+    assign horizontal_position = section.settings.hero_content_horizontal_position | default: 'center'
+    case horizontal_position
+        when 'left'
+            assign horizontal_position_css = 'flex-start'
+        when 'right'
+            assign horizontal_position_css = 'flex-end'
+        else
+            assign horizontal_position_css = 'center'
+    endcase
+
+    assign vertical_position = section.settings.hero_content_vertical_position | default: 'center'
+    case vertical_position
+        when 'top'
+            assign vertical_position_css = 'flex-start'
+        when 'bottom'
+            assign vertical_position_css = 'flex-end'
+        else
+            assign vertical_position_css = 'center'
+    endcase
 %}
 
 <div
     id="Test-hero-{{ section.id }}"
     class="test-hero"
+    style="
+        --test-hero-horizontal-position: {{ horizontal_position_css }};
+        --test-hero-vertical-position: {{ vertical_position_css }};
+        --test-hero-text-align: {{ horizontal_position }};
+        --test-hero-content-max-width: {{ section.settings.hero_content_max_width }}px;
+    "
 >
     <div class="test-hero__image">
-        <img src="{{ section.settings.hero_image | img_url: 'master' | width: 1400 }}" alt="{{ section.settings.hero_title }}">
+        <img src="{{ hero_image | img_url: 'master' | width: 1400 }}" alt="{{ section.settings.hero_title }}">
     </div>
     <div class="test-hero__content">
         {% for block in section.blocks %}
@@ -49,8 +75,8 @@
         min-height: 60vh;
         overflow: hidden;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: var(--test-hero-vertical-position, center);
+        justify-content: var(--test-hero-horizontal-position, center);
     }
 
     .test-hero__image {
@@ -71,10 +97,13 @@
         z-index: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: var(--test-hero-horizontal-position, center);
         gap: 16px;
-        text-align: center;
+        text-align: var(--test-hero-text-align, center);
+        justify-content: center;
         padding: 40px 24px;
+        width: 100%;
+        max-width: var(--test-hero-content-max-width, 800px);
     }
 
     .test-hero__title,
@@ -104,6 +133,60 @@
             "type": "image_picker",
             "id": "hero_image",
             "label": "Hero Image"
+        },
+        {
+            "type": "range",
+            "id": "hero_content_max_width",
+            "label": "Hero Content Max Width",
+            "default": 800,
+            "min": 200,
+            "max": 1000,
+            "step": 10,
+            "unit": "px"
+        },
+        {
+            "type": "header",
+            "content": "Content Position"
+        },
+        {
+            "type": "select",
+            "id": "hero_content_vertical_position",
+            "label": "Vertical Position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                },
+                {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }
+            ],
+            "default": "center"
+        },
+        {
+            "type": "select",
+            "id": "hero_content_horizontal_position",
+            "label": "Horizontal Position",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                },
+                {
+                    "value": "right",
+                    "label": "Right"
+                }
+            ],
+            "default": "center"
         }
     ],
     "blocks": [
