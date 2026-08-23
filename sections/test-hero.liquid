@@ -10,10 +10,85 @@
         <img src="{{ section.settings.hero_image | img_url: 'master' | width: 1400 }}" alt="{{ section.settings.hero_title }}">
     </div>
     <div class="test-hero__content">
-        
+        {% for block in section.blocks %}
+            {% case block.type %}
+                {% when 'title' %}
+                    <h2
+                        class="test-hero__title"
+                        style="color: {{ block.settings.block_title_color }}; font-size: {{ block.settings.block_title_font_size }}px;"
+                        {{ block.shopify_attributes }}
+                    >
+                        {{ block.settings.block_title }}
+                    </h2>
+                {% when 'text' %}
+                    <p
+                        class="test-hero__text"
+                        style="color: {{ block.settings.block_text_color }}; font-size: {{ block.settings.block_text_font_size }}px;"
+                        {{ block.shopify_attributes }}
+                    >
+                        {{ block.settings.block_text }}
+                    </p>
+                {% when 'button' %}
+                    <a
+                        href="{{ block.settings.button_link | default: '#' }}"
+                        class="test-hero__button"
+                        style="color: {{ block.settings.button_color }}; font-size: {{ block.settings.button_font_size }}px;"
+                        {{ block.shopify_attributes }}
+                    >
+                        {{ block.settings.button_text }}
+                    </a>
+            {% endcase %}
+        {% endfor %}
     </div>
 </div>
 
+
+{% stylesheet %}
+    .test-hero {
+        position: relative;
+        min-height: 60vh;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .test-hero__image {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+
+    .test-hero__image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+    }
+
+    .test-hero__content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        text-align: center;
+        padding: 40px 24px;
+    }
+
+    .test-hero__title,
+    .test-hero__text {
+        margin: 0;
+    }
+
+    .test-hero__button {
+        display: inline-block;
+        text-decoration: none;
+        border: 1px solid currentColor;
+        padding: 12px 24px;
+    }
+{% endstylesheet %}
 
 {% schema %}
   {
@@ -122,6 +197,11 @@
     "presets": [
         {
             "name": "Test Hero",
+            "settings": [
+                {
+                    "hero_image": "https://cdn.shopify.com/s/files/1/1088/4756/3038/files/Group_1000008197.png?v=1787497739"
+                }
+            ],
             "blocks": [
                 {
                     "type": "title",
