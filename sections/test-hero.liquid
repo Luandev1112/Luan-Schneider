@@ -1,0 +1,123 @@
+{% liquid
+    assign hero_image = section.settings.hero_image
+%}
+
+<div
+    id="Test-hero-{{ section.id }}"
+    class="test-hero"
+>
+    <div class="test-hero__image">
+        <img src="{{ section.settings.hero_image | img_url: 'master' | width: 1400 }}" alt="{{ section.settings.hero_title }}">
+    </div>
+    <div class="test-hero__content">
+        
+    </div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Test Hero",
+    "tag": "section",
+    "class": "test-hero-warpper section-wrapper",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Test Hero"
+        },
+        {
+            "type": "image_picker",
+            "id": "hero_image",
+            "label": "Hero Image"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "title",
+            "name": "Title",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "block_title",
+                    "label": "Block Title"
+                },
+                {
+                    "type": "color",
+                    "id": "block_title_color",
+                    "label": "Title color",
+                    "default": "#000000"
+                },
+                {
+                    "type": "range",
+                    "id": "block_title_font_size",
+                    "label": "Block Title Font Size",
+                    "default": 48,
+                    "min": 10,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px"
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "name": "Description",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "block_text",
+                    "label": "Block Text"
+                },
+                {
+                    "type": "color",
+                    "id": "block_text_color",
+                    "label": "Text color",
+                    "default": "#000000"
+                },
+                {
+                    "type": "range",
+                    "id": "block_text_font_size",
+                    "label": "Block Text Font Size",
+                    "default": 16,
+                    "min": 10,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px"
+                }
+            ]
+        },
+        {
+            "type": "button",
+            "name": "Button",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "button_text",
+                    "label": "Button Text"
+                },
+                {
+                    "type": "url",
+                    "id": "button_link",
+                    "label": "Button Link"
+                },
+                {
+                    "type": "color",
+                    "id": "button_color",
+                    "default": "#000000",
+                    "label": "Button Color"
+                },
+                {
+                    "type": "range",
+                    "id": "button_font_size",
+                    "label": "Button Font Size",
+                    "default": 16,
+                    "min": 10,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px"
+                }
+            ]
+        }
+    ]
+  }
+{% endschema %}
