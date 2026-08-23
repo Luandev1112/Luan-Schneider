@@ -107,7 +107,12 @@
         "hero_image_height_mobile": 27,
         "hero_content_max_width": 490,
         "hero_content_vertical_position": "bottom",
-        "hero_content_horizontal_position": "left"
+        "hero_content_horizontal_position": "left",
+        "hero_bottom_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL",
+        "hero_bottom_text_mobile": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR",
+        "hero_bottom_text_font_size": 16,
+        "hero_bottom_text_color": "{{ settings.color_palette.foreground }}",
+        "hero_bottom_text_background_color": "#F5F5F5"
       }
     }
   },
