@@ -134,6 +134,50 @@
         align-items: center;
         text-transform: uppercase;
     }
+
+    @media screen and (max-width: 749px) {
+        .test-hero {
+            display: grid;
+            grid-template-areas:
+                "title"
+                "text"
+                "image";
+            gap: 16px;
+            min-height: auto;
+            overflow: visible;
+            padding-top: 24px;
+        }
+
+        .test-hero__image {
+            grid-area: image;
+            position: relative;
+            inset: auto;
+            height: var(--test-hero-image-height, 60vh);
+        }
+
+        .test-hero__content {
+            display: contents;
+        }
+
+        .test-hero__title {
+            grid-area: title;
+            padding: 0 24px;
+        }
+
+        .test-hero__text {
+            grid-area: text;
+            padding: 0 24px;
+        }
+
+        .test-hero__button {
+            grid-area: image;
+            position: relative;
+            z-index: 1;
+            align-self: end;
+            justify-self: center;
+            margin-bottom: 24px;
+        }
+    }
 {% endstylesheet %}
 
 {% schema %}
