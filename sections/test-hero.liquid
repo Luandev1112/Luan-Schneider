@@ -88,6 +88,19 @@
     </div>
 </div>
 
+{% if section.settings.hero_bottom_text != blank or section.settings.hero_bottom_text_mobile != blank %}
+    <div
+        class="test-hero__bottom-text"
+        style="
+            color: {{ section.settings.hero_bottom_text_color }};
+            background-color: {{ section.settings.hero_bottom_text_background_color }};
+        "
+    >
+        <span class="test-hero__bottom-text-desktop" style="font-size: {{ section.settings.hero_bottom_text_font_size }}px;">{{ section.settings.hero_bottom_text }}</span>
+        <span class="test-hero__bottom-text-mobile" style="font-size: {{ section.settings.hero_bottom_text_font_size }}px;">{{ section.settings.hero_bottom_text_mobile | default: section.settings.hero_bottom_text }}</span>
+    </div>
+{% endif %}
+
 
 {% stylesheet %}
     .test-hero {
@@ -154,6 +167,16 @@
         align-items: center;
     }
 
+    .test-hero__bottom-text {
+        width: 100%;
+        padding: 16px 24px;
+        text-align: center;
+    }
+
+    .test-hero__bottom-text-mobile {
+        display: none;
+    }
+
     @media screen and (max-width: 749px) {
         .test-hero {
             display: grid;
@@ -196,6 +219,14 @@
 
         .test-hero__title-mobile,
         .test-hero__text-mobile {
+            display: inline;
+        }
+
+        .test-hero__bottom-text-desktop {
+            display: none;
+        }
+
+        .test-hero__bottom-text-mobile {
             display: inline;
         }
 
@@ -304,6 +335,43 @@
                 }
             ],
             "default": "center"
+        },
+        {
+            "type": "header",
+            "content": "Text Line"
+        },
+        {
+            "type": "text",
+            "id": "hero_bottom_text",
+            "label": "Text"
+        },
+        {
+            "type": "text",
+            "id": "hero_bottom_text_mobile",
+            "label": "Text (Mobile)",
+            "info": "Leave blank to reuse the text above on mobile"
+        },
+        {
+            "type": "range",
+            "id": "hero_bottom_text_font_size",
+            "label": "Font Size",
+            "default": 16,
+            "min": 10,
+            "max": 100,
+            "step": 1,
+            "unit": "px"
+        },
+        {
+            "type": "color",
+            "id": "hero_bottom_text_color",
+            "label": "Font Color",
+            "default": "#000000"
+        },
+        {
+            "type": "color",
+            "id": "hero_bottom_text_background_color",
+            "label": "Background",
+            "default": "#00000000"
         }
     ],
     "blocks": [
