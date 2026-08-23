@@ -91,8 +91,8 @@
             "button_background_color": "#000000",
             "button_font_size": 16,
             "button_show_icon": true,
-            "button_hover_background_color": "#000000",
-            "button_hover_color": "#FFF544"
+            "button_hover_background_color": "#FFF544",
+            "button_hover_color": "{{ settings.color_palette.foreground }}"
           }
         }
       },
