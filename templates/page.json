@@ -65,7 +65,7 @@
         "title_cRz7eK": {
           "type": "title",
           "settings": {
-            "block_title": "Title",
+            "block_title": "The Gift Guide",
             "block_title_color": "#000000",
             "block_title_font_size": 48
           }
@@ -73,7 +73,7 @@
         "text_q7diq9": {
           "type": "text",
           "settings": {
-            "block_text": "Description text",
+            "block_text": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
             "block_text_color": "#000000",
             "block_text_font_size": 16
           }
