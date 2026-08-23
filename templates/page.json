@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "main-page",
@@ -21,10 +22,12 @@
             "alignment": "left",
             "type_preset": "h2",
             "font": "var(--font-body--family)",
+            "font_size": "1rem",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -37,7 +40,9 @@
         },
         "page-content": {
           "type": "page-content",
-          "settings": {},
+          "settings": {
+            "text_color": ""
+          },
           "blocks": {}
         }
       },
@@ -52,9 +57,49 @@
         "padding-block-start": 40,
         "padding-block-end": 80
       }
+    },
+    "test_hero_dz44rN": {
+      "type": "test-hero",
+      "blocks": {
+        "title_cRz7eK": {
+          "type": "title",
+          "settings": {
+            "block_title": "Title",
+            "block_title_color": "#000000",
+            "block_title_font_size": 48
+          }
+        },
+        "text_q7diq9": {
+          "type": "text",
+          "settings": {
+            "block_text": "Description text",
+            "block_text_color": "#000000",
+            "block_text_font_size": 16
+          }
+        },
+        "button_MExEAf": {
+          "type": "button",
+          "settings": {
+            "button_text": "Button",
+            "button_link": "",
+            "button_color": "#000000",
+            "button_font_size": 16
+          }
+        }
+      },
+      "block_order": [
+        "title_cRz7eK",
+        "text_q7diq9",
+        "button_MExEAf"
+      ],
+      "name": "Test Hero",
+      "settings": {
+        "hero_image": "shopify://shop_images/Group_1000008197.png"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "test_hero_dz44rN"
   ]
 }
