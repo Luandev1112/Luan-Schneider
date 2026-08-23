@@ -1,5 +1,6 @@
 {% liquid
     assign hero_image = section.settings.hero_image
+    assign hero_image_mobile = section.settings.hero_image_mobile
 
     assign horizontal_position = section.settings.hero_content_horizontal_position | default: 'center'
     case horizontal_position
@@ -35,7 +36,17 @@
     "
 >
     <div class="test-hero__image">
-        <img src="{{ hero_image | img_url: 'master' | width: 1400 }}" alt="{{ section.settings.hero_title }}">
+        <picture>
+            {% if hero_image_mobile %}
+                <source media="(max-width: 749px)" srcset="{{ hero_image_mobile | image_url: width: 750 }}">
+            {% endif %}
+            <img
+                src="{{ hero_image | image_url: width: 1400 }}"
+                alt="{{ section.settings.hero_title }}"
+                width="{{ hero_image.width }}"
+                height="{{ hero_image.height }}"
+            >
+        </picture>
     </div>
     <div class="test-hero__content">
         {% for block in section.blocks %}
@@ -213,6 +224,12 @@
             "type": "image_picker",
             "id": "hero_image",
             "label": "Hero Image"
+        },
+        {
+            "type": "image_picker",
+            "id": "hero_image_mobile",
+            "label": "Hero Image (Mobile)",
+            "info": "Optional. Falls back to the hero image above on mobile"
         },
         {
             "type": "range",
