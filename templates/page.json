@@ -66,16 +66,20 @@
           "type": "title",
           "settings": {
             "block_title": "The Gift Guide",
+            "block_title_mobile": "",
             "block_title_color": "#000000",
-            "block_title_font_size": 70
+            "block_title_font_size": 70,
+            "block_title_font_size_mobile": 30
           }
         },
         "text_q7diq9": {
           "type": "text",
           "settings": {
             "block_text": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
+            "block_text_mobile": "Discover Joy: Your Ultimate Holiday Gift Destination.",
             "block_text_color": "#000000",
-            "block_text_font_size": 20
+            "block_text_font_size": 20,
+            "block_text_font_size_mobile": 16
           }
         },
         "button_MExEAf": {
@@ -83,7 +87,7 @@
           "settings": {
             "button_text": "Shop Now",
             "button_link": "shopify://collections",
-            "button_color": "#FFFFFF",
+            "button_color": "#ffffff",
             "button_background_color": "#000000",
             "button_font_size": 16,
             "button_show_icon": true
@@ -99,6 +103,7 @@
       "settings": {
         "hero_image": "shopify://shop_images/Group_1000008197.png",
         "hero_image_height": 75,
+        "hero_image_height_mobile": 40,
         "hero_content_max_width": 490,
         "hero_content_vertical_position": "bottom",
         "hero_content_horizontal_position": "left"
