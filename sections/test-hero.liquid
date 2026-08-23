@@ -30,6 +30,7 @@
         --test-hero-vertical-position: {{ vertical_position_css }};
         --test-hero-text-align: {{ horizontal_position }};
         --test-hero-content-max-width: {{ section.settings.hero_content_max_width }}px;
+        --test-hero-image-height: {{ section.settings.hero_image_height }}vh;
     "
 >
     <div class="test-hero__image">
@@ -72,7 +73,7 @@
 {% stylesheet %}
     .test-hero {
         position: relative;
-        min-height: 60vh;
+        min-height: var(--test-hero-image-height, 60vh);
         overflow: hidden;
         display: flex;
         align-items: var(--test-hero-vertical-position, center);
@@ -80,14 +81,16 @@
     }
 
     .test-hero__image {
-        position: relative;
+        position: absolute;
         inset: 0;
         z-index: 0;
     }
 
     .test-hero__image img {
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
     }
 
     .test-hero__content {
@@ -99,7 +102,7 @@
         gap: 16px;
         text-align: var(--test-hero-text-align, center);
         justify-content: center;
-        margin: 40px 65px;
+        padding: 40px 65px;
         width: 100%;
         max-width: var(--test-hero-content-max-width, 800px);
     }
@@ -131,6 +134,16 @@
             "type": "image_picker",
             "id": "hero_image",
             "label": "Hero Image"
+        },
+        {
+            "type": "range",
+            "id": "hero_image_height",
+            "label": "Hero Image Height",
+            "default": 60,
+            "min": 30,
+            "max": 100,
+            "step": 5,
+            "unit": "vh"
         },
         {
             "type": "range",
