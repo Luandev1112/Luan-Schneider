@@ -5,9 +5,11 @@
         --product-block-columns-desktop: {{ section.settings.columns_desktop }};
         --product-block-columns-mobile: {{ section.settings.columns_mobile }};
         --product-block-gap: {{ section.settings.grid_gap }}px;
+        --product-block-gap-mobile: {{ section.settings.grid_gap_mobile }}px;
         --product-block-image-ratio: {{ section.settings.image_ratio }};
         --product-block-heading-align: {{ section.settings.heading_align }};
         --product-block-heading-font-size: {{ section.settings.heading_font_size }}px;
+        --product-block-heading-font-size-mobile: {{ section.settings.heading_font_size_mobile }}px;
         --product-block-heading-color: {{ section.settings.heading_color }};
         --product-block-focal-size: {{ section.settings.focal_point_size }}px;
         --product-block-focal-background-color: {{ section.settings.focal_point_background_color }};
@@ -287,8 +289,13 @@
             padding: 24px 16px;
         }
 
+        .product-block__heading {
+            font-size: var(--product-block-heading-font-size-mobile, 24px);
+        }
+
         .product-block__list {
             grid-template-columns: repeat(var(--product-block-columns-mobile, 2), minmax(0, 1fr));
+            gap: var(--product-block-gap-mobile, 12px);
         }
     }
 {% endstylesheet %}
@@ -315,6 +322,16 @@
             "id": "heading_font_size",
             "label": "Heading Font Size",
             "default": 32,
+            "min": 12,
+            "max": 80,
+            "step": 1,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "heading_font_size_mobile",
+            "label": "Heading Font Size (Mobile)",
+            "default": 24,
             "min": 12,
             "max": 80,
             "step": 1,
@@ -373,6 +390,16 @@
             "id": "grid_gap",
             "label": "Grid Gap",
             "default": 16,
+            "min": 0,
+            "max": 60,
+            "step": 2,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "grid_gap_mobile",
+            "label": "Grid Gap (Mobile)",
+            "default": 12,
             "min": 0,
             "max": 60,
             "step": 2,
