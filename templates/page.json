@@ -91,7 +91,7 @@
             "button_background_color": "#000000",
             "button_font_size": 16,
             "button_show_icon": true,
-            "button_hover_background_color": "#FFF544",
+            "button_hover_background_color": "#fff544",
             "button_hover_color": "{{ settings.color_palette.foreground }}"
           }
         }
@@ -116,10 +116,71 @@
         "hero_bottom_text_color": "{{ settings.color_palette.foreground }}",
         "hero_bottom_text_background_color": "#f5f5f5"
       }
+    },
+    "product_grid_bCjKzN": {
+      "type": "product-grid",
+      "blocks": {
+        "product_fpxtK4": {
+          "type": "product",
+          "settings": {
+            "product": "black-leather-bag"
+          }
+        },
+        "product_QxCRdC": {
+          "type": "product",
+          "settings": {
+            "product": "blue-silk-tuxedo"
+          }
+        },
+        "product_Hthw7y": {
+          "type": "product",
+          "settings": {
+            "product": "chequered-red-shirt"
+          }
+        },
+        "product_34ytii": {
+          "type": "product",
+          "settings": {
+            "product": "classic-leather-jacket"
+          }
+        },
+        "product_LzWNAG": {
+          "type": "product",
+          "settings": {
+            "product": "classic-varsity-top"
+          }
+        },
+        "product_kNXwjx": {
+          "type": "product",
+          "settings": {
+            "product": "dark-denim-top"
+          }
+        }
+      },
+      "block_order": [
+        "product_fpxtK4",
+        "product_QxCRdC",
+        "product_Hthw7y",
+        "product_34ytii",
+        "product_LzWNAG",
+        "product_kNXwjx"
+      ],
+      "name": "Product Grid",
+      "settings": {
+        "heading": "Featured products",
+        "heading_font_size": 32,
+        "heading_color": "#000000",
+        "heading_align": "left",
+        "columns_desktop": 3,
+        "columns_mobile": 2,
+        "grid_gap": 16,
+        "image_ratio": "1"
+      }
     }
   },
   "order": [
     "main",
-    "test_hero_dz44rN"
+    "test_hero_dz44rN",
+    "product_grid_bCjKzN"
   ]
 }
