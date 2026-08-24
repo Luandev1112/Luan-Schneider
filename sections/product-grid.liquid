@@ -9,9 +9,9 @@
         --product-block-heading-align: {{ section.settings.heading_align }};
         --product-block-heading-font-size: {{ section.settings.heading_font_size }}px;
         --product-block-heading-color: {{ section.settings.heading_color }};
-        --product-block-hotspot-size: {{ section.settings.hotspot_size }}px;
-        --product-block-hotspot-background-color: {{ section.settings.hotspot_background_color }};
-        --product-block-hotspot-icon-color: {{ section.settings.hotspot_icon_color }};
+        --product-block-focal-size: {{ section.settings.focal_point_size }}px;
+        --product-block-focal-background-color: {{ section.settings.focal_point_background_color }};
+        --product-block-focal-icon-color: {{ section.settings.focal_point_icon_color }};
     "
 >
     {% if section.settings.heading != blank %}
@@ -23,7 +23,17 @@
             {% for block in section.blocks %}
                 {% case block.type %}
                     {% when 'product' %}
-                        {% assign card_product = block.settings.product %}
+                        {% liquid
+                            assign card_product = block.settings.product
+
+                            assign focal_point = card_product.featured_media.presentation.focal_point
+                            if focal_point == blank
+                                assign focal_point = '50% 50%'
+                            endif
+                            assign focal_parts = focal_point | split: ' '
+                            assign focal_x = focal_parts[0] | default: '50%'
+                            assign focal_y = focal_parts[1] | default: '50%'
+                        %}
                         <li class="product-block__card" {{ block.shopify_attributes }}>
                             {% if card_product != blank %}
                                 <a class="product-block__link" href="{{ card_product.url }}">
@@ -36,17 +46,18 @@
                                                 width="{{ card_product.featured_image.width }}"
                                                 height="{{ card_product.featured_image.height }}"
                                                 loading="lazy"
+                                                style="--product-block-image-focal: {{ focal_point }};"
                                             >
                                         {% else %}
                                             {{ 'product-1' | placeholder_svg_tag: 'product-block__placeholder' }}
                                         {% endif %}
 
-                                        {% if section.settings.show_hotspot %}
+                                        {% if section.settings.show_focal_point and card_product.featured_image %}
                                             <span
-                                                class="product-block__hotspot"
+                                                class="product-block__focal-point"
                                                 style="
-                                                    --product-block-hotspot-x: {{ block.settings.hotspot_x }}%;
-                                                    --product-block-hotspot-y: {{ block.settings.hotspot_y }}%;
+                                                    --product-block-focal-x: {{ focal_x }};
+                                                    --product-block-focal-y: {{ focal_y }};
                                                 "
                                                 aria-hidden="true"
                                             ></span>
@@ -109,7 +120,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center center;
+        object-position: var(--product-block-image-focal, center center);
         transition: transform 0.4s ease;
     }
 
@@ -117,32 +128,32 @@
         transform: scale(1.04);
     }
 
-    .product-block__hotspot {
+    .product-block__focal-point {
         position: absolute;
-        top: var(--product-block-hotspot-y, 50%);
-        left: var(--product-block-hotspot-x, 50%);
+        top: var(--product-block-focal-y, 50%);
+        left: var(--product-block-focal-x, 50%);
         transform: translate(-50%, -50%);
-        width: var(--product-block-hotspot-size, 40px);
-        height: var(--product-block-hotspot-size, 40px);
+        width: var(--product-block-focal-size, 40px);
+        height: var(--product-block-focal-size, 40px);
         border-radius: 50%;
-        background-color: var(--product-block-hotspot-background-color, #ffffff);
+        background-color: var(--product-block-focal-background-color, #ffffff);
     }
 
-    .product-block__hotspot::before,
-    .product-block__hotspot::after {
+    .product-block__focal-point::before,
+    .product-block__focal-point::after {
         content: '';
         position: absolute;
         inset: 0;
         margin: auto;
-        background-color: var(--product-block-hotspot-icon-color, #000000);
+        background-color: var(--product-block-focal-icon-color, #000000);
     }
 
-    .product-block__hotspot::before {
+    .product-block__focal-point::before {
         width: 40%;
         height: 2px;
     }
 
-    .product-block__hotspot::after {
+    .product-block__focal-point::after {
         width: 2px;
         height: 40%;
     }
@@ -265,18 +276,19 @@
         },
         {
             "type": "header",
-            "content": "Hotspot"
+            "content": "Focal Point"
         },
         {
             "type": "checkbox",
-            "id": "show_hotspot",
-            "label": "Show Hotspot",
+            "id": "show_focal_point",
+            "label": "Show Focal Point",
+            "info": "Marks each image's focal point, set in the Shopify media editor",
             "default": true
         },
         {
             "type": "range",
-            "id": "hotspot_size",
-            "label": "Hotspot Size",
+            "id": "focal_point_size",
+            "label": "Focal Point Size",
             "default": 40,
             "min": 20,
             "max": 80,
@@ -285,14 +297,14 @@
         },
         {
             "type": "color",
-            "id": "hotspot_background_color",
-            "label": "Hotspot Background",
+            "id": "focal_point_background_color",
+            "label": "Focal Point Background",
             "default": "#ffffff"
         },
         {
             "type": "color",
-            "id": "hotspot_icon_color",
-            "label": "Hotspot Icon Color",
+            "id": "focal_point_icon_color",
+            "label": "Focal Point Icon Color",
             "default": "#000000"
         }
     ],
@@ -305,26 +317,6 @@
                     "type": "product",
                     "id": "product",
                     "label": "Product"
-                },
-                {
-                    "type": "range",
-                    "id": "hotspot_x",
-                    "label": "Hotspot Horizontal Position",
-                    "default": 50,
-                    "min": 0,
-                    "max": 100,
-                    "step": 1,
-                    "unit": "%"
-                },
-                {
-                    "type": "range",
-                    "id": "hotspot_y",
-                    "label": "Hotspot Vertical Position",
-                    "default": 50,
-                    "min": 0,
-                    "max": 100,
-                    "step": 1,
-                    "unit": "%"
                 }
             ]
         }
