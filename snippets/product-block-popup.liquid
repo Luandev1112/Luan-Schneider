@@ -1,0 +1,74 @@
+{% comment %}
+    Add-to-cart popup for the Product Grid section.
+
+    Accepts:
+    - card_product: {Object} Product object to render.
+    - dialog_id: {String} Unique id, matched by the trigger's data-dialog-open.
+
+    Usage:
+    {% render 'product-block-popup', card_product: card_product, dialog_id: dialog_id %}
+{% endcomment %}
+
+<dialog class="product-block__dialog" id="{{ dialog_id }}" aria-label="{{ card_product.title | escape }}">
+    <div class="product-block__dialog-inner">
+        <button
+            type="button"
+            class="product-block__dialog-close"
+            aria-label="Close"
+            data-dialog-close
+        >&times;</button>
+
+        {% if card_product.featured_image %}
+            <img
+                class="product-block__dialog-image"
+                src="{{ card_product.featured_image | image_url: width: 400 }}"
+                alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
+                width="{{ card_product.featured_image.width }}"
+                height="{{ card_product.featured_image.height }}"
+                loading="lazy"
+            >
+        {% endif %}
+
+        <div class="product-block__dialog-info">
+            <span class="product-block__dialog-title">{{ card_product.title }}</span>
+            <span class="product-block__dialog-price">
+                {% if card_product.compare_at_price > card_product.price %}
+                    <s class="product-block__dialog-price-compare">{{ card_product.compare_at_price | money }}</s>
+                {% endif %}
+                {{ card_product.price | money }}
+            </span>
+
+            {% if card_product.available %}
+                {% form 'product', card_product, class: 'product-block__dialog-form' %}
+                    {% if card_product.variants.size > 1 %}
+                        <label class="product-block__dialog-label" for="Variant-{{ dialog_id }}">Variant</label>
+                        <select
+                            class="product-block__dialog-select"
+                            id="Variant-{{ dialog_id }}"
+                            name="id"
+                        >
+                            {% for variant in card_product.variants %}
+                                <option
+                                    value="{{ variant.id }}"
+                                    {% unless variant.available %}disabled{% endunless %}
+                                >
+                                    {{ variant.title }} - {{ variant.price | money }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input type="hidden" name="id" value="{{ card_product.selected_or_first_available_variant.id }}">
+                    {% endif %}
+
+                    <button type="submit" class="product-block__dialog-submit" name="add">
+                        Add to cart
+                    </button>
+                {% endform %}
+            {% else %}
+                <span class="product-block__dialog-sold-out">Sold out</span>
+            {% endif %}
+
+            <a class="product-block__dialog-link" href="{{ card_product.url }}">View full details</a>
+        </div>
+    </div>
+</dialog>

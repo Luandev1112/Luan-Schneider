@@ -34,36 +34,40 @@
                             assign focal_x = focal_parts[0] | default: '50%'
                             assign focal_y = focal_parts[1] | default: '50%'
                         %}
+                        {% assign dialog_id = 'ProductDialog-' | append: section.id | append: '-' | append: block.id %}
                         <li class="product-block__card" {{ block.shopify_attributes }}>
                             {% if card_product != blank %}
-                                <a class="product-block__link" href="{{ card_product.url }}">
-                                    <div class="product-block__media">
-                                        {% if card_product.featured_image %}
-                                            <img
-                                                class="product-block__image"
-                                                src="{{ card_product.featured_image | image_url: width: 800 }}"
-                                                alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
-                                                width="{{ card_product.featured_image.width }}"
-                                                height="{{ card_product.featured_image.height }}"
-                                                loading="lazy"
-                                                style="--product-block-image-focal: {{ focal_point }};"
-                                            >
-                                        {% else %}
-                                            {{ 'product-1' | placeholder_svg_tag: 'product-block__placeholder' }}
-                                        {% endif %}
+                                <div class="product-block__media">
+                                    {% if card_product.featured_image %}
+                                        <img
+                                            class="product-block__image"
+                                            src="{{ card_product.featured_image | image_url: width: 800 }}"
+                                            alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
+                                            width="{{ card_product.featured_image.width }}"
+                                            height="{{ card_product.featured_image.height }}"
+                                            loading="lazy"
+                                            style="--product-block-image-focal: {{ focal_point }};"
+                                        >
+                                    {% else %}
+                                        {{ 'product-1' | placeholder_svg_tag: 'product-block__placeholder' }}
+                                    {% endif %}
 
-                                        {% if section.settings.show_focal_point and card_product.featured_image %}
-                                            <span
-                                                class="product-block__focal-point"
-                                                style="
-                                                    --product-block-focal-x: {{ focal_x }};
-                                                    --product-block-focal-y: {{ focal_y }};
-                                                "
-                                                aria-hidden="true"
-                                            ></span>
-                                        {% endif %}
-                                    </div>
-                                </a>
+                                    {% if section.settings.show_focal_point and card_product.featured_image %}
+                                        <button
+                                            type="button"
+                                            class="product-block__focal-point"
+                                            style="
+                                                --product-block-focal-x: {{ focal_x }};
+                                                --product-block-focal-y: {{ focal_y }};
+                                            "
+                                            aria-haspopup="dialog"
+                                            aria-label="Add {{ card_product.title | escape }} to cart"
+                                            data-dialog-open="{{ dialog_id }}"
+                                        ></button>
+                                    {% endif %}
+                                </div>
+
+                                {% render 'product-block-popup', card_product: card_product, dialog_id: dialog_id %}
                             {% else %}
                                 <div class="product-block__media">
                                     {{ 'product-1' | placeholder_svg_tag: 'product-block__placeholder' }}
@@ -75,6 +79,33 @@
         </ul>
     {% endif %}
 </div>
+
+<script>
+    (() => {
+        const section = document.getElementById('Product-block-{{ section.id }}');
+        if (!section || section.dataset.dialogsBound === 'true') return;
+        section.dataset.dialogsBound = 'true';
+
+        section.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-dialog-open]');
+            if (trigger) {
+                const dialog = section.querySelector('#' + CSS.escape(trigger.dataset.dialogOpen));
+                if (dialog) dialog.showModal();
+                return;
+            }
+
+            if (event.target.closest('[data-dialog-close]')) {
+                event.target.closest('dialog').close();
+            }
+        });
+
+        section.querySelectorAll('.product-block__dialog').forEach((dialog) => {
+            dialog.addEventListener('click', (event) => {
+                if (event.target === dialog) dialog.close();
+            });
+        });
+    })();
+</script>
 
 {% stylesheet %}
     .product-block {
@@ -103,12 +134,6 @@
         flex-direction: column;
     }
 
-    .product-block__link {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-    }
-
     .product-block__media {
         position: relative;
         aspect-ratio: var(--product-block-image-ratio, 1);
@@ -124,7 +149,7 @@
         transition: transform 0.4s ease;
     }
 
-    .product-block__link:hover .product-block__image {
+    .product-block__media:hover .product-block__image {
         transform: scale(1.04);
     }
 
@@ -135,8 +160,11 @@
         transform: translate(-50%, -50%);
         width: var(--product-block-focal-size, 40px);
         height: var(--product-block-focal-size, 40px);
+        padding: 0;
+        border: none;
         border-radius: 50%;
         background-color: var(--product-block-focal-background-color, #ffffff);
+        cursor: pointer;
     }
 
     .product-block__focal-point::before,
@@ -156,6 +184,102 @@
     .product-block__focal-point::after {
         width: 2px;
         height: 40%;
+    }
+
+    .product-block__dialog {
+        width: min(440px, calc(100vw - 32px));
+        padding: 0;
+        border: none;
+        background-color: #ffffff;
+        color: #000000;
+    }
+
+    .product-block__dialog::backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .product-block__dialog-inner {
+        position: relative;
+        display: flex;
+        gap: 16px;
+        padding: 24px;
+    }
+
+    .product-block__dialog-close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: none;
+        background: none;
+        font-size: 24px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .product-block__dialog-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .product-block__dialog-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .product-block__dialog-title {
+        font-size: 16px;
+        padding-right: 32px;
+    }
+
+    .product-block__dialog-price {
+        display: flex;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .product-block__dialog-price-compare {
+        opacity: 0.6;
+    }
+
+    .product-block__dialog-form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .product-block__dialog-label {
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .product-block__dialog-select {
+        padding: 8px;
+    }
+
+    .product-block__dialog-submit {
+        padding: 12px 24px;
+        border: 1px solid currentColor;
+        background-color: #000000;
+        color: #ffffff;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    .product-block__dialog-sold-out {
+        font-size: 14px;
+        opacity: 0.6;
+    }
+
+    .product-block__dialog-link {
+        font-size: 12px;
+        color: inherit;
     }
 
     @media screen and (max-width: 749px) {
