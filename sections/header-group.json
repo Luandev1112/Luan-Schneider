@@ -88,8 +88,8 @@
       ],
       "settings": {
         "background_color": "#f5f5f5",
-        "padding_vertical": 16,
-        "padding_vertical_mobile": 16,
+        "padding_vertical": 8,
+        "padding_vertical_mobile": 6,
         "column_gap": 24
       }
     }
