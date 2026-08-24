@@ -1,3 +1,12 @@
+{% liquid
+    assign has_panel = false
+    for block in section.blocks
+        if block.type == 'announcement' or block.type == 'cta'
+            assign has_panel = true
+        endif
+    endfor
+%}
+
 <div
     id="Header-{{ section.id }}"
     class="site-header"
@@ -11,9 +20,23 @@
     "
 >
     <div class="site-header__inner">
+        {% if has_panel %}
+            <button
+                type="button"
+                class="site-header__toggle"
+                aria-expanded="false"
+                aria-controls="HeaderPanel-{{ section.id }}"
+                aria-label="Menu"
+                data-header-toggle
+            >
+                <span class="site-header__toggle-bar"></span>
+                <span class="site-header__toggle-bar"></span>
+                <span class="site-header__toggle-bar"></span>
+            </button>
+        {% endif %}
+
         {% for block in section.blocks %}
-            {% case block.type %}
-                {% when 'logo' %}
+            {% if block.type == 'logo' %}
                     <div class="site-header__slot site-header__slot--logo" {{ block.shopify_attributes }}>
                         <a
                             class="site-header__logo"
@@ -40,42 +63,72 @@
                             {% endif %}
                         </a>
                     </div>
-
-                {% when 'announcement' %}
-                    <div
-                        class="site-header__slot site-header__slot--announcement{% if block.settings.hide_on_mobile %} site-header__slot--hide-mobile{% endif %}"
-                        style="
-                            --site-header-announcement-color: {{ block.settings.announcement_color }};
-                            --site-header-announcement-font-size: {{ block.settings.announcement_font_size }}px;
-                        "
-                        {{ block.shopify_attributes }}
-                    >
-                        <p class="site-header__announcement">{{ block.settings.announcement_text }}</p>
-                    </div>
-
-                {% when 'cta' %}
-                    <div class="site-header__slot site-header__slot--cta" {{ block.shopify_attributes }}>
-                        <a
-                            class="site-header__cta"
-                            href="{{ block.settings.cta_link | default: '#' }}"
-                            style="
-                                --site-header-cta-background: {{ block.settings.cta_background_color }};
-                                --site-header-cta-color: {{ block.settings.cta_color }};
-                                --site-header-cta-hover-background: {{ block.settings.cta_hover_background_color }};
-                                --site-header-cta-hover-color: {{ block.settings.cta_hover_color }};
-                                --site-header-cta-font-size: {{ block.settings.cta_font_size }}px;
-                            "
-                        >
-                            <span class="site-header__cta-text">{{ block.settings.cta_text }}</span>
-                            {% if block.settings.cta_show_icon %}
-                                {% render 'arrow-icon', size: 28 %}
-                            {% endif %}
-                        </a>
-                    </div>
-            {% endcase %}
+            {% endif %}
         {% endfor %}
+
+        {% comment %}
+            Announcement and CTA share one collapsible panel on mobile. On desktop the
+            panel is display:contents, so both slots fall back into the header grid.
+        {% endcomment %}
+        {% if has_panel %}
+            <div class="site-header__panel" id="HeaderPanel-{{ section.id }}">
+                <div class="site-header__panel-inner">
+                    {% for block in section.blocks %}
+                        {% case block.type %}
+                            {% when 'announcement' %}
+                                <div
+                                    class="site-header__slot site-header__slot--announcement{% if block.settings.hide_on_mobile %} site-header__slot--hide-mobile{% endif %}"
+                                    style="
+                                        --site-header-announcement-color: {{ block.settings.announcement_color }};
+                                        --site-header-announcement-font-size: {{ block.settings.announcement_font_size }}px;
+                                    "
+                                    {{ block.shopify_attributes }}
+                                >
+                                    <p class="site-header__announcement">{{ block.settings.announcement_text }}</p>
+                                </div>
+
+                            {% when 'cta' %}
+                                <div class="site-header__slot site-header__slot--cta" {{ block.shopify_attributes }}>
+                                    <a
+                                        class="site-header__cta"
+                                        href="{{ block.settings.cta_link | default: '#' }}"
+                                        style="
+                                            --site-header-cta-background: {{ block.settings.cta_background_color }};
+                                            --site-header-cta-color: {{ block.settings.cta_color }};
+                                            --site-header-cta-hover-background: {{ block.settings.cta_hover_background_color }};
+                                            --site-header-cta-hover-color: {{ block.settings.cta_hover_color }};
+                                            --site-header-cta-font-size: {{ block.settings.cta_font_size }}px;
+                                        "
+                                    >
+                                        <span class="site-header__cta-text">{{ block.settings.cta_text }}</span>
+                                        {% if block.settings.cta_show_icon %}
+                                            {% render 'arrow-icon', size: 28 %}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                        {% endcase %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
+
+<script>
+    (() => {
+        const header = document.getElementById('Header-{{ section.id }}');
+        if (!header || header.dataset.toggleBound === 'true') return;
+        header.dataset.toggleBound = 'true';
+
+        const toggle = header.querySelector('[data-header-toggle]');
+        if (!toggle) return;
+
+        toggle.addEventListener('click', () => {
+            const open = header.classList.toggle('is-open');
+            toggle.setAttribute('aria-expanded', String(open));
+        });
+    })();
+</script>
 
 {% stylesheet %}
     .site-header {
@@ -105,6 +158,16 @@
     .site-header__slot--cta {
         grid-column: 3;
         justify-self: end;
+    }
+
+    /* Desktop: the panel dissolves so its slots join the header grid directly. */
+    .site-header__panel,
+    .site-header__panel-inner {
+        display: contents;
+    }
+
+    .site-header__toggle {
+        display: none;
     }
 
     .site-header__logo {
@@ -179,18 +242,89 @@
 
     @media screen and (max-width: 749px) {
         .site-header__inner {
-            grid-template-columns: 1fr;
-            justify-items: center;
+            grid-template-columns: 1fr auto 1fr;
+            grid-template-areas:
+                "toggle logo ."
+                "panel panel panel";
+            align-items: center;
+            column-gap: 12px;
+            row-gap: 0;
             text-align: center;
-            gap: 12px;
             padding: var(--site-header-padding-mobile, 16px) 16px;
             min-height: var(--site-header-height-mobile, 64px);
         }
 
-        .site-header__slot--logo,
+        .site-header__toggle {
+            grid-area: toggle;
+            justify-self: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: none;
+            background: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        /* Three bars that fold into an X — drawn, not a literal character. */
+        .site-header__toggle-bar {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background-color: currentColor;
+            transition: transform 0.3s ease, opacity 0.2s ease;
+        }
+
+        .site-header.is-open .site-header__toggle-bar:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .site-header.is-open .site-header__toggle-bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .site-header.is-open .site-header__toggle-bar:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .site-header__slot--logo {
+            grid-area: logo;
+            justify-self: center;
+        }
+
+        /* 0fr -> 1fr animates the reveal without hardcoding a height. */
+        .site-header__panel {
+            grid-area: panel;
+            display: grid;
+            grid-template-rows: 0fr;
+            opacity: 0;
+            transition: grid-template-rows 0.35s ease, opacity 0.25s ease;
+        }
+
+        .site-header.is-open .site-header__panel {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        .site-header__panel-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .site-header.is-open .site-header__panel-inner {
+            padding-top: 16px;
+        }
+
         .site-header__slot--announcement,
         .site-header__slot--cta {
-            grid-column: 1;
             justify-self: center;
         }
 
