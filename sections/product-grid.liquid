@@ -106,6 +106,59 @@
                 if (event.target === dialog) dialog.close();
             });
         });
+
+        const dataEl = (dialog) => dialog.querySelector('[data-variant-data]');
+
+        const syncVariant = (dialog) => {
+            const idInput = dialog.querySelector('[data-variant-id]');
+            const submit = dialog.querySelector('.product-block__dialog-submit');
+            if (!idInput || !submit) return;
+
+            // Fallback markup picks the variant id directly.
+            const variantSelect = dialog.querySelector('[data-variant-select]');
+            if (variantSelect) {
+                idInput.value = variantSelect.value;
+                return;
+            }
+
+            const json = dataEl(dialog);
+            if (!json) return;
+
+            let variants;
+            try {
+                variants = JSON.parse(json.textContent);
+            } catch (error) {
+                return;
+            }
+
+            const chosen = {};
+            dialog.querySelectorAll('[data-option-position]').forEach((input) => {
+                if (input.type === 'radio' && !input.checked) return;
+                chosen[input.dataset.optionPosition] = input.value;
+            });
+
+            const match = variants.find((variant) =>
+                Object.entries(chosen).every(([position, value]) => variant.options[position - 1] === value)
+            );
+
+            const price = dialog.querySelector('[data-variant-price]');
+
+            if (!match) {
+                submit.disabled = true;
+                submit.textContent = 'Unavailable';
+                return;
+            }
+
+            idInput.value = match.id;
+            submit.disabled = !match.available;
+            submit.textContent = match.available ? 'Add to cart' : 'Sold out';
+            if (price) price.textContent = match.price;
+        };
+
+        section.addEventListener('change', (event) => {
+            const dialog = event.target.closest('.product-block__dialog');
+            if (dialog) syncVariant(dialog);
+        });
     })();
 </script>
 
@@ -189,7 +242,10 @@
     }
 
     .product-block__dialog {
-        width: min(440px, calc(100vw - 32px));
+        width: 331px;
+        height: 447px;
+        max-width: calc(100vw - 32px);
+        max-height: calc(100vh - 32px);
         padding: 0;
         border: none;
         background-color: #ffffff;
@@ -203,8 +259,12 @@
     .product-block__dialog-inner {
         position: relative;
         display: flex;
+        flex-direction: column;
         gap: 16px;
-        padding: 24px;
+        box-sizing: border-box;
+        height: 100%;
+        padding: 16px;
+        overflow-y: auto;
     }
 
     .product-block__dialog-close {
@@ -221,9 +281,14 @@
         cursor: pointer;
     }
 
+    .product-block__dialog-top {
+        display: flex;
+        gap: 12px;
+    }
+
     .product-block__dialog-image {
         width: 120px;
-        height: 120px;
+        height: 140px;
         object-fit: cover;
         flex-shrink: 0;
     }
@@ -231,13 +296,13 @@
     .product-block__dialog-info {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         min-width: 0;
     }
 
     .product-block__dialog-title {
-        font-size: 16px;
-        padding-right: 32px;
+        font-size: 15px;
+        padding-right: 24px;
     }
 
     .product-block__dialog-price {
@@ -250,15 +315,68 @@
         opacity: 0.6;
     }
 
+    .product-block__dialog-description {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.4;
+        opacity: 0.7;
+    }
+
     .product-block__dialog-form {
         display: flex;
         flex-direction: column;
         gap: 8px;
+        flex-grow: 1;
     }
 
     .product-block__dialog-label {
+        display: block;
         font-size: 12px;
         text-transform: uppercase;
+        padding: 0;
+    }
+
+    .product-block__dialog-fieldset {
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+
+    .product-block__dialog-swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+    }
+
+    .product-block__dialog-swatch-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .product-block__dialog-swatch {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        padding: 6px 10px;
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch {
+        border-color: #000000;
+        background-color: #000000;
+        color: #ffffff;
+    }
+
+    .product-block__dialog-swatch-input:focus-visible + .product-block__dialog-swatch {
+        outline: 2px solid #000000;
+        outline-offset: 2px;
     }
 
     .product-block__dialog-select {
@@ -266,6 +384,7 @@
     }
 
     .product-block__dialog-submit {
+        margin-top: auto;
         padding: 12px 24px;
         border: 1px solid currentColor;
         background-color: #000000;
@@ -274,17 +393,15 @@
         cursor: pointer;
     }
 
-    .product-block__dialog-sold-out {
-        font-size: 14px;
-        opacity: 0.6;
-    }
-
-    .product-block__dialog-link {
-        font-size: 12px;
-        color: inherit;
+    .product-block__dialog-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     @media screen and (max-width: 749px) {
+        .product-block__heading {
+            text-align: center;
+        }
         .product-block {
             padding: 24px 16px;
         }

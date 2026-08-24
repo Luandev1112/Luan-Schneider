@@ -9,6 +9,19 @@
     {% render 'product-block-popup', card_product: card_product, dialog_id: dialog_id %}
 {% endcomment %}
 
+{% liquid
+    assign current_variant = card_product.selected_or_first_available_variant
+
+    for option in card_product.options_with_values
+        assign option_name = option.name | downcase
+        if option_name contains 'colo'
+            assign color_option = option
+        elsif option_name contains 'size'
+            assign size_option = option
+        endif
+    endfor
+%}
+
 <dialog class="product-block__dialog" id="{{ dialog_id }}" aria-label="{{ card_product.title | escape }}">
     <div class="product-block__dialog-inner">
         <button
@@ -18,57 +31,127 @@
             data-dialog-close
         >&times;</button>
 
-        {% if card_product.featured_image %}
-            <img
-                class="product-block__dialog-image"
-                src="{{ card_product.featured_image | image_url: width: 400 }}"
-                alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
-                width="{{ card_product.featured_image.width }}"
-                height="{{ card_product.featured_image.height }}"
-                loading="lazy"
-            >
-        {% endif %}
-
-        <div class="product-block__dialog-info">
-            <span class="product-block__dialog-title">{{ card_product.title }}</span>
-            <span class="product-block__dialog-price">
-                {% if card_product.compare_at_price > card_product.price %}
-                    <s class="product-block__dialog-price-compare">{{ card_product.compare_at_price | money }}</s>
-                {% endif %}
-                {{ card_product.price | money }}
-            </span>
-
-            {% if card_product.available %}
-                {% form 'product', card_product, class: 'product-block__dialog-form' %}
-                    {% if card_product.variants.size > 1 %}
-                        <label class="product-block__dialog-label" for="Variant-{{ dialog_id }}">Variant</label>
-                        <select
-                            class="product-block__dialog-select"
-                            id="Variant-{{ dialog_id }}"
-                            name="id"
-                        >
-                            {% for variant in card_product.variants %}
-                                <option
-                                    value="{{ variant.id }}"
-                                    {% unless variant.available %}disabled{% endunless %}
-                                >
-                                    {{ variant.title }} - {{ variant.price | money }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    {% else %}
-                        <input type="hidden" name="id" value="{{ card_product.selected_or_first_available_variant.id }}">
-                    {% endif %}
-
-                    <button type="submit" class="product-block__dialog-submit" name="add">
-                        Add to cart
-                    </button>
-                {% endform %}
-            {% else %}
-                <span class="product-block__dialog-sold-out">Sold out</span>
+        <div class="product-block__dialog-top">
+            {% if card_product.featured_image %}
+                <img
+                    class="product-block__dialog-image"
+                    src="{{ card_product.featured_image | image_url: width: 240 }}"
+                    alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
+                    width="{{ card_product.featured_image.width }}"
+                    height="{{ card_product.featured_image.height }}"
+                    loading="lazy"
+                >
             {% endif %}
 
-            <a class="product-block__dialog-link" href="{{ card_product.url }}">View full details</a>
+            <div class="product-block__dialog-info">
+                <span class="product-block__dialog-title">{{ card_product.title }}</span>
+                <span class="product-block__dialog-price" data-variant-price>
+                    {% if card_product.compare_at_price > card_product.price %}
+                        <s class="product-block__dialog-price-compare">{{ card_product.compare_at_price | money }}</s>
+                    {% endif %}
+                    {{ card_product.price | money }}
+                </span>
+                {% if card_product.description != blank %}
+                    <p class="product-block__dialog-description">
+                        {{ card_product.description | strip_html | truncate: 120 }}
+                    </p>
+                {% endif %}
+            </div>
         </div>
+
+        {% form 'product', card_product, class: 'product-block__dialog-form' %}
+            <input
+                type="hidden"
+                name="id"
+                value="{{ current_variant.id }}"
+                data-variant-id
+            >
+
+            {% if color_option %}
+                <fieldset class="product-block__dialog-fieldset">
+                    <legend class="product-block__dialog-label">{{ color_option.name }}</legend>
+                    <div class="product-block__dialog-swatches">
+                        {% assign color_index = color_option.position | minus: 1 %}
+                        {% for value in color_option.values %}
+                            <input
+                                type="radio"
+                                class="product-block__dialog-swatch-input"
+                                id="Swatch-{{ dialog_id }}-{{ forloop.index }}"
+                                name="Option{{ color_option.position }}-{{ dialog_id }}"
+                                value="{{ value | escape }}"
+                                data-option-position="{{ color_option.position }}"
+                                {% if value == current_variant.options[color_index] %}checked{% endif %}
+                            >
+                            <label class="product-block__dialog-swatch" for="Swatch-{{ dialog_id }}-{{ forloop.index }}">
+                                {{ value }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            {% endif %}
+
+            {% if size_option %}
+                <label class="product-block__dialog-label" for="Size-{{ dialog_id }}">{{ size_option.name }}</label>
+                <select
+                    class="product-block__dialog-select"
+                    id="Size-{{ dialog_id }}"
+                    data-option-position="{{ size_option.position }}"
+                >
+                    {% assign size_index = size_option.position | minus: 1 %}
+                    {% for value in size_option.values %}
+                        <option
+                            value="{{ value | escape }}"
+                            {% if value == current_variant.options[size_index] %}selected{% endif %}
+                        >
+                            {{ value }}
+                        </option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+
+            {% comment %} Products whose options are neither colour nor size fall back to a plain variant list. {% endcomment %}
+            {% unless color_option or size_option %}
+                {% if card_product.variants.size > 1 %}
+                    <label class="product-block__dialog-label" for="Variant-{{ dialog_id }}">Variant</label>
+                    <select
+                        class="product-block__dialog-select"
+                        id="Variant-{{ dialog_id }}"
+                        data-variant-select
+                    >
+                        {% for variant in card_product.variants %}
+                            <option
+                                value="{{ variant.id }}"
+                                {% unless variant.available %}disabled{% endunless %}
+                                {% if variant.id == current_variant.id %}selected{% endif %}
+                            >
+                                {{ variant.title }} - {{ variant.price | money }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            {% endunless %}
+
+            <button
+                type="submit"
+                class="product-block__dialog-submit"
+                name="add"
+                {% unless card_product.available %}disabled{% endunless %}
+            >
+                {% if card_product.available %}Add to cart{% else %}Sold out{% endif %}
+            </button>
+        {% endform %}
+
+        <script type="application/json" data-variant-data>
+            [
+                {%- for variant in card_product.variants -%}
+                    {
+                        "id": {{ variant.id }},
+                        "available": {{ variant.available }},
+                        "options": {{ variant.options | json }},
+                        "price": {{ variant.price | money | json }}
+                    }{%- unless forloop.last -%},{%- endunless -%}
+                {%- endfor -%}
+            ]
+        </script>
     </div>
 </dialog>
