@@ -12,6 +12,7 @@
         --product-block-heading-font-size-mobile: {{ section.settings.heading_font_size_mobile }}px;
         --product-block-heading-color: {{ section.settings.heading_color }};
         --product-block-focal-size: {{ section.settings.focal_point_size }}px;
+        --product-block-focal-size-mobile: {{ section.settings.focal_point_size_mobile }}px;
         --product-block-focal-background-color: {{ section.settings.focal_point_background_color }};
         --product-block-focal-icon-color: {{ section.settings.focal_point_icon_color }};
     "
@@ -414,6 +415,11 @@
             grid-template-columns: repeat(var(--product-block-columns-mobile, 2), minmax(0, 1fr));
             gap: var(--product-block-gap-mobile, 12px);
         }
+
+        .product-block__focal-point {
+            width: var(--product-block-focal-size-mobile, 28px);
+            height: var(--product-block-focal-size-mobile, 28px);
+        }
     }
 {% endstylesheet %}
 
@@ -559,6 +565,16 @@
             "label": "Focal Point Size",
             "default": 40,
             "min": 20,
+            "max": 80,
+            "step": 2,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "focal_point_size_mobile",
+            "label": "Focal Point Size (Mobile)",
+            "default": 28,
+            "min": 12,
             "max": 80,
             "step": 2,
             "unit": "px"
