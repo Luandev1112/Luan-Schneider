@@ -5,6 +5,8 @@
         --site-header-background: {{ section.settings.background_color }};
         --site-header-padding: {{ section.settings.padding_vertical }}px;
         --site-header-padding-mobile: {{ section.settings.padding_vertical_mobile }}px;
+        --site-header-height: {{ section.settings.header_height }}px;
+        --site-header-height-mobile: {{ section.settings.header_height_mobile }}px;
         --site-header-gap: {{ section.settings.column_gap }}px;
     "
 >
@@ -19,7 +21,8 @@
                             style="
                                 --site-header-logo-color: {{ block.settings.logo_color }};
                                 --site-header-logo-font-size: {{ block.settings.logo_font_size }}px;
-                                --site-header-logo-letter-spacing: {{ block.settings.logo_letter_spacing | divided_by: 100.0 }}em;
+                                --site-header-logo-height: {{ block.settings.logo_height }}px;
+                                --site-header-logo-height-mobile: {{ block.settings.logo_height_mobile }}px;
                             "
                         >
                             {% if block.settings.logo_image %}
@@ -29,7 +32,6 @@
                                     alt="{{ block.settings.logo_image.alt | default: shop.name | escape }}"
                                     width="{{ block.settings.logo_image.width }}"
                                     height="{{ block.settings.logo_image.height }}"
-                                    style="width: {{ block.settings.logo_width }}px;"
                                 >
                             {% else %}
                                 <span class="site-header__logo-text">
@@ -86,6 +88,8 @@
         align-items: center;
         gap: var(--site-header-gap, 24px);
         padding: var(--site-header-padding, 16px) 24px;
+        box-sizing: border-box;
+        min-height: var(--site-header-height, 72px);
     }
 
     .site-header__slot--logo {
@@ -112,12 +116,13 @@
 
     .site-header__logo-image {
         display: block;
-        height: auto;
+        height: var(--site-header-logo-height, 32px);
+        width: auto;
+        object-fit: contain;
     }
 
     .site-header__logo-text {
         font-size: var(--site-header-logo-font-size, 24px);
-        letter-spacing: var(--site-header-logo-letter-spacing, 0.1em);
         text-transform: uppercase;
         font-weight: 700;
         white-space: nowrap;
@@ -179,6 +184,7 @@
             text-align: center;
             gap: 12px;
             padding: var(--site-header-padding-mobile, 16px) 16px;
+            min-height: var(--site-header-height-mobile, 64px);
         }
 
         .site-header__slot--logo,
@@ -190,6 +196,10 @@
 
         .site-header__slot--hide-mobile {
             display: none;
+        }
+
+        .site-header__logo-image {
+            height: var(--site-header-logo-height-mobile, 28px);
         }
     }
 {% endstylesheet %}
@@ -205,6 +215,28 @@
             "id": "background_color",
             "label": "Background Color",
             "default": "#f5f5f5"
+        },
+        {
+            "type": "range",
+            "id": "header_height",
+            "label": "Header Height",
+            "info": "Minimum height. Grows if the content needs more room",
+            "default": 72,
+            "min": 40,
+            "max": 200,
+            "step": 4,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "header_height_mobile",
+            "label": "Header Height (Mobile)",
+            "info": "Minimum height. Grows if the content needs more room",
+            "default": 64,
+            "min": 40,
+            "max": 200,
+            "step": 4,
+            "unit": "px"
         },
         {
             "type": "range",
@@ -251,12 +283,22 @@
                 },
                 {
                     "type": "range",
-                    "id": "logo_width",
-                    "label": "Logo Image Width",
-                    "default": 160,
-                    "min": 60,
-                    "max": 400,
-                    "step": 10,
+                    "id": "logo_height",
+                    "label": "Logo Image Height",
+                    "default": 19,
+                    "min": 16,
+                    "max": 120,
+                    "step": 2,
+                    "unit": "px"
+                },
+                {
+                    "type": "range",
+                    "id": "logo_height_mobile",
+                    "label": "Logo Image Height (Mobile)",
+                    "default": 18,
+                    "min": 16,
+                    "max": 120,
+                    "step": 2,
                     "unit": "px"
                 },
                 {
@@ -274,16 +316,6 @@
                     "max": 60,
                     "step": 1,
                     "unit": "px"
-                },
-                {
-                    "type": "range",
-                    "id": "logo_letter_spacing",
-                    "label": "Logo Letter Spacing",
-                    "info": "Hundredths of an em",
-                    "default": 10,
-                    "min": 0,
-                    "max": 50,
-                    "step": 1
                 },
                 {
                     "type": "color",
