@@ -416,7 +416,7 @@
         height: 100%;
         flex-shrink: 0;
         background-color: var(--product-block-swatch-color, transparent);
-        border-right: 1px solid var(rgba(0, 0, 0, 0.15));
+        border-right: 1px solid rgba(0, 0, 0, 0.15);
     }
 
     .product-block__dialog-swatch-name {
@@ -426,10 +426,13 @@
         white-space: nowrap;
     }
 
-    /* .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch {
-        box-shadow: inset 0 0 0 1px #000000;
-        font-weight: 600;
-    } */
+    .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch {
+        color: #ffffff;
+    }
+
+    .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch::before {
+        transform: scaleX(1);
+    }
 
     .product-block__dialog-swatch-input:focus-visible + .product-block__dialog-swatch {
         outline: 2px solid #000000;
