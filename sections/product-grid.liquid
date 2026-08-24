@@ -179,7 +179,37 @@
             group.style.setProperty('--product-block-swatch-index', inputs.indexOf(input));
         };
 
+        // A native select gives CSS no "open" state, so track it to flip the arrow.
+        const selectWrap = (target) => {
+            const select = target.closest('.product-block__dialog-select');
+            return select ? select.closest('.product-block__dialog-select-wrap') : null;
+        };
+
+        section.addEventListener('mousedown', (event) => {
+            const wrap = selectWrap(event.target);
+            if (wrap) wrap.classList.toggle('is-open');
+        });
+
+        section.addEventListener('focusout', (event) => {
+            const wrap = selectWrap(event.target);
+            if (wrap) wrap.classList.remove('is-open');
+        });
+
+        section.addEventListener('keydown', (event) => {
+            const wrap = selectWrap(event.target);
+            if (!wrap) return;
+
+            if (event.key === 'Escape' || event.key === 'Tab') {
+                wrap.classList.remove('is-open');
+            } else if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+                wrap.classList.add('is-open');
+            }
+        });
+
         section.addEventListener('change', (event) => {
+            const wrap = selectWrap(event.target);
+            if (wrap) wrap.classList.remove('is-open');
+
             const swatch = event.target.closest('.product-block__dialog-swatch-input');
             if (swatch) moveSwatchIndicator(swatch);
 
@@ -453,15 +483,17 @@
 
     .product-block__dialog-select-wrap {
         position: relative;
-        display: flex;
-        align-items: stretch;
+        display: block;
         border: 1px solid #000000;
     }
 
+    /* Select spans the full wrap so the arrow area is clickable too. */
     .product-block__dialog-select {
-        flex: 1 1 auto;
+        width: 100%;
         min-width: 0;
+        box-sizing: border-box;
         padding-left: 14px;
+        padding-right: 60px;
         border: none;
         border-radius: 0;
         background: none;
@@ -475,11 +507,14 @@
     }
 
     .product-block__dialog-select-arrow {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 46px;
-        flex-shrink: 0;
         border-left: 1px solid #000000;
         pointer-events: none;
     }
@@ -487,6 +522,11 @@
     .product-block__dialog-select-arrow svg {
         width: 16px;
         height: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .product-block__dialog-select-wrap.is-open .product-block__dialog-select-arrow svg {
+        transform: rotate(180deg);
     }
 
     .product-block__dialog-submit {
