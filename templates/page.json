@@ -174,7 +174,11 @@
         "columns_desktop": 3,
         "columns_mobile": 2,
         "grid_gap": 34,
-        "image_ratio": "1"
+        "image_ratio": "1",
+        "show_focal_point": true,
+        "focal_point_size": 22,
+        "focal_point_background_color": "#ffffff",
+        "focal_point_icon_color": "#000000"
       }
     }
   },
