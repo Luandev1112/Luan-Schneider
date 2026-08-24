@@ -169,14 +169,17 @@
       "settings": {
         "heading": "Tisso vison in the wild",
         "heading_font_size": 36,
+        "heading_font_size_mobile": 24,
         "heading_color": "#000000",
         "heading_align": "left",
         "columns_desktop": 3,
         "columns_mobile": 2,
         "grid_gap": 34,
+        "grid_gap_mobile": 12,
         "image_ratio": "1",
         "show_focal_point": true,
         "focal_point_size": 22,
+        "focal_point_size_mobile": 16,
         "focal_point_background_color": "#ffffff",
         "focal_point_icon_color": "#000000"
       }
