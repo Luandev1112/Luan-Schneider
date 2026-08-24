@@ -9,6 +9,9 @@
         --product-block-heading-align: {{ section.settings.heading_align }};
         --product-block-heading-font-size: {{ section.settings.heading_font_size }}px;
         --product-block-heading-color: {{ section.settings.heading_color }};
+        --product-block-hotspot-size: {{ section.settings.hotspot_size }}px;
+        --product-block-hotspot-background-color: {{ section.settings.hotspot_background_color }};
+        --product-block-hotspot-icon-color: {{ section.settings.hotspot_icon_color }};
     "
 >
     {% if section.settings.heading != blank %}
@@ -36,6 +39,17 @@
                                             >
                                         {% else %}
                                             {{ 'product-1' | placeholder_svg_tag: 'product-block__placeholder' }}
+                                        {% endif %}
+
+                                        {% if section.settings.show_hotspot %}
+                                            <span
+                                                class="product-block__hotspot"
+                                                style="
+                                                    --product-block-hotspot-x: {{ block.settings.hotspot_x }}%;
+                                                    --product-block-hotspot-y: {{ block.settings.hotspot_y }}%;
+                                                "
+                                                aria-hidden="true"
+                                            ></span>
                                         {% endif %}
                                     </div>
                                 </a>
@@ -101,6 +115,36 @@
 
     .product-block__link:hover .product-block__image {
         transform: scale(1.04);
+    }
+
+    .product-block__hotspot {
+        position: absolute;
+        top: var(--product-block-hotspot-y, 50%);
+        left: var(--product-block-hotspot-x, 50%);
+        transform: translate(-50%, -50%);
+        width: var(--product-block-hotspot-size, 40px);
+        height: var(--product-block-hotspot-size, 40px);
+        border-radius: 50%;
+        background-color: var(--product-block-hotspot-background-color, #ffffff);
+    }
+
+    .product-block__hotspot::before,
+    .product-block__hotspot::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        background-color: var(--product-block-hotspot-icon-color, #000000);
+    }
+
+    .product-block__hotspot::before {
+        width: 40%;
+        height: 2px;
+    }
+
+    .product-block__hotspot::after {
+        width: 2px;
+        height: 40%;
     }
 
     @media screen and (max-width: 749px) {
@@ -218,6 +262,38 @@
                 }
             ],
             "default": "1"
+        },
+        {
+            "type": "header",
+            "content": "Hotspot"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_hotspot",
+            "label": "Show Hotspot",
+            "default": true
+        },
+        {
+            "type": "range",
+            "id": "hotspot_size",
+            "label": "Hotspot Size",
+            "default": 40,
+            "min": 20,
+            "max": 80,
+            "step": 2,
+            "unit": "px"
+        },
+        {
+            "type": "color",
+            "id": "hotspot_background_color",
+            "label": "Hotspot Background",
+            "default": "#ffffff"
+        },
+        {
+            "type": "color",
+            "id": "hotspot_icon_color",
+            "label": "Hotspot Icon Color",
+            "default": "#000000"
         }
     ],
     "blocks": [
@@ -229,6 +305,26 @@
                     "type": "product",
                     "id": "product",
                     "label": "Product"
+                },
+                {
+                    "type": "range",
+                    "id": "hotspot_x",
+                    "label": "Hotspot Horizontal Position",
+                    "default": 50,
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "%"
+                },
+                {
+                    "type": "range",
+                    "id": "hotspot_y",
+                    "label": "Hotspot Vertical Position",
+                    "default": 50,
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "%"
                 }
             ]
         }
