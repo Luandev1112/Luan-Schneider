@@ -89,7 +89,7 @@
       "settings": {
         "background_color": "#f5f5f5",
         "padding_vertical": 8,
-        "padding_vertical_mobile": 6,
+        "padding_vertical_mobile": 16,
         "column_gap": 24
       }
     }
