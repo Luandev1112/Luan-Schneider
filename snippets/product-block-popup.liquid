@@ -68,10 +68,25 @@
             >
 
             {% if color_option %}
-                {% assign color_index = color_option.position | minus: 1 %}
+                {% liquid
+                    assign color_index = color_option.position | minus: 1
+
+                    assign color_selected_index = 0
+                    for value in color_option.values
+                        if value == current_variant.options[color_index]
+                            assign color_selected_index = forloop.index0
+                        endif
+                    endfor
+                %}
                 <fieldset class="product-block__dialog-fieldset">
                     <legend class="product-block__dialog-label">{{ color_option.name }}</legend>
-                    <div class="product-block__dialog-swatches">
+                    <div
+                        class="product-block__dialog-swatches"
+                        style="
+                            --product-block-swatch-count: {{ color_option.values.size }};
+                            --product-block-swatch-index: {{ color_selected_index }};
+                        "
+                    >
                         {% for value in color_option.values %}
                             {% liquid
                                 if value.swatch.color != blank

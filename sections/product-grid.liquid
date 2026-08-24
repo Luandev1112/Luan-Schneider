@@ -171,7 +171,18 @@
             if (price) price.textContent = match.price;
         };
 
+        // Slides the black square to whichever swatch is now selected.
+        const moveSwatchIndicator = (input) => {
+            const group = input.closest('.product-block__dialog-swatches');
+            if (!group) return;
+            const inputs = [...group.querySelectorAll('.product-block__dialog-swatch-input')];
+            group.style.setProperty('--product-block-swatch-index', inputs.indexOf(input));
+        };
+
         section.addEventListener('change', (event) => {
+            const swatch = event.target.closest('.product-block__dialog-swatch-input');
+            if (swatch) moveSwatchIndicator(swatch);
+
             const dialog = event.target.closest('.product-block__dialog');
             if (dialog) syncVariant(dialog);
         });
@@ -367,9 +378,26 @@
     }
 
     .product-block__dialog-swatches {
+        position: relative;
+        z-index: 0;
         display: flex;
         margin-top: 6px;
         border: 1px solid #000000;
+        overflow: hidden;
+    }
+
+    /* Single black square that slides between swatches. */
+    .product-block__dialog-swatches::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        width: calc(100% / var(--product-block-swatch-count, 1));
+        background-color: #000000;
+        transform: translateX(calc(100% * var(--product-block-swatch-index, 0)));
+        transition: transform 0.3s ease;
     }
 
     .product-block__dialog-swatch-input {
@@ -381,8 +409,6 @@
     }
 
     .product-block__dialog-swatch {
-        position: relative;
-        z-index: 0;
         flex: 1 1 0;
         display: flex;
         align-items: center;
@@ -392,19 +418,7 @@
         font-size: 16px;
         cursor: pointer;
         height: 40px;
-        overflow: hidden;
         transition: color 0.3s ease;
-    }
-
-    .product-block__dialog-swatch::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background-color: #000000;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease;
     }
 
     .product-block__dialog-swatch:last-of-type {
@@ -428,10 +442,6 @@
 
     .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch {
         color: #ffffff;
-    }
-
-    .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch::before {
-        transform: scaleX(1);
     }
 
     .product-block__dialog-swatch-input:focus-visible + .product-block__dialog-swatch {
