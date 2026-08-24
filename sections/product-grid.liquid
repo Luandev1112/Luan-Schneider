@@ -1,0 +1,255 @@
+<div
+    id="Product-block-{{ section.id }}"
+    class="product-block"
+    style="
+        --product-block-columns-desktop: {{ section.settings.columns_desktop }};
+        --product-block-columns-mobile: {{ section.settings.columns_mobile }};
+        --product-block-gap: {{ section.settings.grid_gap }}px;
+        --product-block-image-ratio: {{ section.settings.image_ratio }};
+        --product-block-heading-align: {{ section.settings.heading_align }};
+        --product-block-heading-font-size: {{ section.settings.heading_font_size }}px;
+        --product-block-heading-color: {{ section.settings.heading_color }};
+    "
+>
+    {% if section.settings.heading != blank %}
+        <h2 class="product-block__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+        <ul class="product-block__list" role="list">
+            {% for block in section.blocks %}
+                {% case block.type %}
+                    {% when 'product' %}
+                        {% assign card_product = block.settings.product %}
+                        <li class="product-block__card" {{ block.shopify_attributes }}>
+                            {% if card_product != blank %}
+                                <a class="product-block__link" href="{{ card_product.url }}">
+                                    <div class="product-block__media">
+                                        {% if card_product.featured_image %}
+                                            <img
+                                                class="product-block__image"
+                                                src="{{ card_product.featured_image | image_url: width: 800 }}"
+                                                alt="{{ card_product.featured_image.alt | default: card_product.title | escape }}"
+                                                width="{{ card_product.featured_image.width }}"
+                                                height="{{ card_product.featured_image.height }}"
+                                                loading="lazy"
+                                            >
+                                        {% else %}
+                                            {{ 'product-1' | placeholder_svg_tag: 'product-block__placeholder' }}
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            {% else %}
+                                <div class="product-block__media">
+                                    {{ 'product-1' | placeholder_svg_tag: 'product-block__placeholder' }}
+                                </div>
+                            {% endif %}
+                        </li>
+                {% endcase %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+{% stylesheet %}
+    .product-block {
+        padding: 40px 24px;
+    }
+
+    .product-block__heading {
+        margin: 0 0 24px;
+        font-size: var(--product-block-heading-font-size, 32px);
+        color: var(--product-block-heading-color, #000000);
+        text-align: var(--product-block-heading-align, left);
+    }
+
+    .product-block__list {
+        display: grid;
+        grid-template-columns: repeat(var(--product-block-columns-desktop, 4), minmax(0, 1fr));
+        gap: var(--product-block-gap, 16px);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .product-block__card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-block__link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .product-block__media {
+        position: relative;
+        aspect-ratio: var(--product-block-image-ratio, 1);
+        overflow: hidden;
+    }
+
+    .product-block__image,
+    .product-block__placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        transition: transform 0.4s ease;
+    }
+
+    .product-block__link:hover .product-block__image {
+        transform: scale(1.04);
+    }
+
+    @media screen and (max-width: 749px) {
+        .product-block {
+            padding: 24px 16px;
+        }
+
+        .product-block__list {
+            grid-template-columns: repeat(var(--product-block-columns-mobile, 2), minmax(0, 1fr));
+        }
+    }
+{% endstylesheet %}
+
+{% schema %}
+  {
+    "name": "Product Grid",
+    "tag": "section",
+    "class": "product-block-wrapper section-wrapper",
+    "max_blocks": 24,
+    "settings": [
+        {
+            "type": "header",
+            "content": "Heading"
+        },
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Featured products"
+        },
+        {
+            "type": "range",
+            "id": "heading_font_size",
+            "label": "Heading Font Size",
+            "default": 32,
+            "min": 12,
+            "max": 80,
+            "step": 1,
+            "unit": "px"
+        },
+        {
+            "type": "color",
+            "id": "heading_color",
+            "label": "Heading Color",
+            "default": "#000000"
+        },
+        {
+            "type": "select",
+            "id": "heading_align",
+            "label": "Heading Alignment",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                },
+                {
+                    "value": "right",
+                    "label": "Right"
+                }
+            ],
+            "default": "left"
+        },
+        {
+            "type": "header",
+            "content": "Layout"
+        },
+        {
+            "type": "range",
+            "id": "columns_desktop",
+            "label": "Columns (Desktop)",
+            "default": 4,
+            "min": 1,
+            "max": 6,
+            "step": 1
+        },
+        {
+            "type": "range",
+            "id": "columns_mobile",
+            "label": "Columns (Mobile)",
+            "default": 2,
+            "min": 1,
+            "max": 3,
+            "step": 1
+        },
+        {
+            "type": "range",
+            "id": "grid_gap",
+            "label": "Grid Gap",
+            "default": 16,
+            "min": 0,
+            "max": 60,
+            "step": 2,
+            "unit": "px"
+        },
+        {
+            "type": "select",
+            "id": "image_ratio",
+            "label": "Image Ratio",
+            "options": [
+                {
+                    "value": "1",
+                    "label": "Square"
+                },
+                {
+                    "value": "3 / 4",
+                    "label": "Portrait"
+                },
+                {
+                    "value": "4 / 3",
+                    "label": "Landscape"
+                }
+            ],
+            "default": "1"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "product",
+            "name": "Product",
+            "settings": [
+                {
+                    "type": "product",
+                    "id": "product",
+                    "label": "Product"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Product Grid",
+            "blocks": [
+                {
+                    "type": "product"
+                },
+                {
+                    "type": "product"
+                },
+                {
+                    "type": "product"
+                },
+                {
+                    "type": "product"
+                }
+            ]
+        }
+    ]
+  }
+{% endschema %}
