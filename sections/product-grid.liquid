@@ -381,6 +381,8 @@
     }
 
     .product-block__dialog-swatch {
+        position: relative;
+        z-index: 0;
         flex: 1 1 0;
         display: flex;
         align-items: center;
@@ -390,6 +392,19 @@
         font-size: 16px;
         cursor: pointer;
         height: 40px;
+        overflow: hidden;
+        transition: color 0.3s ease;
+    }
+
+    .product-block__dialog-swatch::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-color: #000000;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
     }
 
     .product-block__dialog-swatch:last-of-type {
@@ -441,6 +456,7 @@
         -webkit-appearance: none;
         cursor: pointer;
         height: 40px;
+        outline: unset;
     }
 
     .product-block__dialog-select-arrow {
