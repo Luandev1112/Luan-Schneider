@@ -52,8 +52,8 @@
           "settings": {
             "logo_image": "shopify://shop_images/Group_1000007777.png",
             "logo_width": 160,
-            "logo_text": "",
-            "logo_font_size": 24,
+            "logo_text": "Find the ideal gift for your loved ones.",
+            "logo_font_size": 16,
             "logo_letter_spacing": 10,
             "logo_color": "#000000"
           }
