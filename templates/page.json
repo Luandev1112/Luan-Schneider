@@ -173,7 +173,7 @@
         "heading_align": "left",
         "columns_desktop": 3,
         "columns_mobile": 2,
-        "grid_gap": 16,
+        "grid_gap": 34,
         "image_ratio": "1"
       }
     }
