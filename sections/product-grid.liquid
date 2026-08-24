@@ -279,7 +279,7 @@
         gap: 16px;
         box-sizing: border-box;
         height: 100%;
-        padding: 24px;
+        padding: 28px 16px;
         overflow-y: auto;
     }
 
@@ -314,10 +314,11 @@
         flex-direction: column;
         gap: 6px;
         min-width: 0;
+        justify-content: space-between;
     }
 
     .product-block__dialog-title {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.2;
         padding-right: 20px;
     }
@@ -325,7 +326,8 @@
     .product-block__dialog-price {
         display: flex;
         gap: 8px;
-        font-size: 17px;
+        font-size: 16px;
+        font-family: Lustria;
     }
 
     .product-block__dialog-price-compare {
@@ -334,7 +336,7 @@
 
     .product-block__dialog-description {
         margin: 0;
-        font-size: 12px;
+        font-size: 14px;
         line-height: 1.4;
         opacity: 0.7;
     }
@@ -354,7 +356,7 @@
 
     .product-block__dialog-label {
         display: block;
-        font-size: 13px;
+        font-size: 14px;
         padding: 0;
     }
 
@@ -381,12 +383,13 @@
     .product-block__dialog-swatch {
         flex: 1 1 0;
         display: flex;
-        align-items: stretch;
+        align-items: center;
         gap: 10px;
         min-width: 0;
         border-right: 1px solid #000000;
-        font-size: 14px;
+        font-size: 16px;
         cursor: pointer;
+        height: 40px;
     }
 
     .product-block__dialog-swatch:last-of-type {
@@ -394,9 +397,10 @@
     }
 
     .product-block__dialog-swatch-chip {
-        width: 8px;
+        width: 5px;
         flex-shrink: 0;
-        border-right: 1px solid rgba(0, 0, 0, 0.15);
+        background-color: var(--product-block-swatch-color, transparent);
+        border-right: 5px solid var(--product-block-swatch-color, rgba(0, 0, 0, 0.15));
     }
 
     .product-block__dialog-swatch-name {
@@ -406,10 +410,10 @@
         white-space: nowrap;
     }
 
-    .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch {
+    /* .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch {
         box-shadow: inset 0 0 0 1px #000000;
         font-weight: 600;
-    }
+    } */
 
     .product-block__dialog-swatch-input:focus-visible + .product-block__dialog-swatch {
         outline: 2px solid #000000;
