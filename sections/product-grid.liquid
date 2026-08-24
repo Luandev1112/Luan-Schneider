@@ -259,7 +259,7 @@
 
     .product-block__dialog {
         width: 331px;
-        height: 447px;
+        /* height: 447px; */
         max-width: calc(100vw - 32px);
         max-height: calc(100vh - 32px);
         padding: 0;
@@ -398,9 +398,10 @@
 
     .product-block__dialog-swatch-chip {
         width: 5px;
+        height: 100%;
         flex-shrink: 0;
         background-color: var(--product-block-swatch-color, transparent);
-        border-right: 5px solid var(--product-block-swatch-color, rgba(0, 0, 0, 0.15));
+        border-right: 1px solid var(rgba(0, 0, 0, 0.15));
     }
 
     .product-block__dialog-swatch-name {
@@ -430,15 +431,16 @@
     .product-block__dialog-select {
         flex: 1 1 auto;
         min-width: 0;
-        padding: 12px;
+        padding-left: 14px;
         border: none;
         border-radius: 0;
         background: none;
-        font-size: 14px;
+        font-size: 16px;
         color: inherit;
         appearance: none;
         -webkit-appearance: none;
         cursor: pointer;
+        height: 40px;
     }
 
     .product-block__dialog-select-arrow {
