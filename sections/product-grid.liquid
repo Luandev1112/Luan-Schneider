@@ -115,6 +115,13 @@
             const submit = dialog.querySelector('.product-block__dialog-submit');
             if (!idInput || !submit) return;
 
+            // Label lives in its own span so updating it never removes the arrow icon.
+            const label = submit.querySelector('.product-block__dialog-submit-text');
+            const setState = (text, disabled) => {
+                if (label) label.textContent = text;
+                submit.disabled = disabled;
+            };
+
             // Fallback markup picks the variant id directly.
             const variantSelect = dialog.querySelector('[data-variant-select]');
             if (variantSelect) {
@@ -132,27 +139,35 @@
                 return;
             }
 
+            const controls = [...dialog.querySelectorAll('[data-option-position]')];
+            const positions = new Set(controls.map((control) => control.dataset.optionPosition));
+
             const chosen = {};
-            dialog.querySelectorAll('[data-option-position]').forEach((input) => {
-                if (input.type === 'radio' && !input.checked) return;
-                chosen[input.dataset.optionPosition] = input.value;
+            controls.forEach((control) => {
+                if (control.type === 'radio' && !control.checked) return;
+                if (!control.value) return;
+                chosen[control.dataset.optionPosition] = control.value;
             });
+
+            // Nothing to resolve until every option has a value; `required` blocks submission meanwhile.
+            if (Object.keys(chosen).length < positions.size) {
+                setState('Add to cart', false);
+                return;
+            }
 
             const match = variants.find((variant) =>
                 Object.entries(chosen).every(([position, value]) => variant.options[position - 1] === value)
             );
 
-            const price = dialog.querySelector('[data-variant-price]');
-
             if (!match) {
-                submit.disabled = true;
-                submit.textContent = 'Unavailable';
+                setState('Unavailable', true);
                 return;
             }
 
             idInput.value = match.id;
-            submit.disabled = !match.available;
-            submit.textContent = match.available ? 'Add to cart' : 'Sold out';
+            setState(match.available ? 'Add to cart' : 'Sold out', !match.available);
+
+            const price = dialog.querySelector('[data-variant-price]');
             if (price) price.textContent = match.price;
         };
 
@@ -264,20 +279,20 @@
         gap: 16px;
         box-sizing: border-box;
         height: 100%;
-        padding: 16px;
+        padding: 24px;
         overflow-y: auto;
     }
 
     .product-block__dialog-close {
         position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 32px;
-        height: 32px;
+        top: 10px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
         padding: 0;
         border: none;
         background: none;
-        font-size: 24px;
+        font-size: 22px;
         line-height: 1;
         cursor: pointer;
     }
@@ -302,14 +317,15 @@
     }
 
     .product-block__dialog-title {
-        font-size: 15px;
-        padding-right: 24px;
+        font-size: 18px;
+        line-height: 1.2;
+        padding-right: 20px;
     }
 
     .product-block__dialog-price {
         display: flex;
         gap: 8px;
-        font-size: 14px;
+        font-size: 17px;
     }
 
     .product-block__dialog-price-compare {
@@ -326,14 +342,19 @@
     .product-block__dialog-form {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 14px;
         flex-grow: 1;
+    }
+
+    .product-block__dialog-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
     }
 
     .product-block__dialog-label {
         display: block;
-        font-size: 12px;
-        text-transform: uppercase;
+        font-size: 13px;
         padding: 0;
     }
 
@@ -345,9 +366,8 @@
 
     .product-block__dialog-swatches {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
         margin-top: 6px;
+        border: 1px solid #000000;
     }
 
     .product-block__dialog-swatch-input {
@@ -359,39 +379,98 @@
     }
 
     .product-block__dialog-swatch {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 40px;
-        padding: 6px 10px;
-        border: 1px solid rgba(0, 0, 0, 0.3);
-        font-size: 12px;
+        flex: 1 1 0;
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+        min-width: 0;
+        border-right: 1px solid #000000;
+        font-size: 14px;
         cursor: pointer;
     }
 
+    .product-block__dialog-swatch:last-of-type {
+        border-right: none;
+    }
+
+    .product-block__dialog-swatch-chip {
+        width: 8px;
+        flex-shrink: 0;
+        border-right: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .product-block__dialog-swatch-name {
+        padding: 12px 4px 12px 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .product-block__dialog-swatch-input:checked + .product-block__dialog-swatch {
-        border-color: #000000;
-        background-color: #000000;
-        color: #ffffff;
+        box-shadow: inset 0 0 0 1px #000000;
+        font-weight: 600;
     }
 
     .product-block__dialog-swatch-input:focus-visible + .product-block__dialog-swatch {
         outline: 2px solid #000000;
-        outline-offset: 2px;
+        outline-offset: -2px;
+    }
+
+    .product-block__dialog-select-wrap {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        border: 1px solid #000000;
     }
 
     .product-block__dialog-select {
-        padding: 8px;
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 12px;
+        border: none;
+        border-radius: 0;
+        background: none;
+        font-size: 14px;
+        color: inherit;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+    }
+
+    .product-block__dialog-select-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        flex-shrink: 0;
+        border-left: 1px solid #000000;
+        pointer-events: none;
+    }
+
+    .product-block__dialog-select-arrow svg {
+        width: 16px;
+        height: 10px;
     }
 
     .product-block__dialog-submit {
         margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        min-height: 56px;
         padding: 12px 24px;
-        border: 1px solid currentColor;
+        border: none;
         background-color: #000000;
         color: #ffffff;
+        font-size: 14px;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
         cursor: pointer;
+    }
+
+    .product-block__dialog-submit svg {
+        flex-shrink: 0;
     }
 
     .product-block__dialog-submit:disabled {

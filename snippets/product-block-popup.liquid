@@ -68,11 +68,18 @@
             >
 
             {% if color_option %}
+                {% assign color_index = color_option.position | minus: 1 %}
                 <fieldset class="product-block__dialog-fieldset">
                     <legend class="product-block__dialog-label">{{ color_option.name }}</legend>
                     <div class="product-block__dialog-swatches">
-                        {% assign color_index = color_option.position | minus: 1 %}
                         {% for value in color_option.values %}
+                            {% liquid
+                                if value.swatch.color != blank
+                                    assign swatch_color = value.swatch.color
+                                else
+                                    assign swatch_color = value | downcase | replace: ' ', ''
+                                endif
+                            %}
                             <input
                                 type="radio"
                                 class="product-block__dialog-swatch-input"
@@ -83,7 +90,11 @@
                                 {% if value == current_variant.options[color_index] %}checked{% endif %}
                             >
                             <label class="product-block__dialog-swatch" for="Swatch-{{ dialog_id }}-{{ forloop.index }}">
-                                {{ value }}
+                                <span
+                                    class="product-block__dialog-swatch-chip"
+                                    style="background-color: {{ swatch_color }};"
+                                ></span>
+                                <span class="product-block__dialog-swatch-name">{{ value }}</span>
                             </label>
                         {% endfor %}
                     </div>
@@ -91,43 +102,58 @@
             {% endif %}
 
             {% if size_option %}
-                <label class="product-block__dialog-label" for="Size-{{ dialog_id }}">{{ size_option.name }}</label>
-                <select
-                    class="product-block__dialog-select"
-                    id="Size-{{ dialog_id }}"
-                    data-option-position="{{ size_option.position }}"
-                >
-                    {% assign size_index = size_option.position | minus: 1 %}
-                    {% for value in size_option.values %}
-                        <option
-                            value="{{ value | escape }}"
-                            {% if value == current_variant.options[size_index] %}selected{% endif %}
+                {% assign size_index = size_option.position | minus: 1 %}
+                <div class="product-block__dialog-field">
+                    <label class="product-block__dialog-label" for="Size-{{ dialog_id }}">{{ size_option.name }}</label>
+                    <div class="product-block__dialog-select-wrap">
+                        <select
+                            class="product-block__dialog-select"
+                            id="Size-{{ dialog_id }}"
+                            data-option-position="{{ size_option.position }}"
+                            required
                         >
-                            {{ value }}
-                        </option>
-                    {% endfor %}
-                </select>
+                            <option value="" disabled selected>Choose your {{ size_option.name | downcase }}</option>
+                            {% for value in size_option.values %}
+                                <option value="{{ value | escape }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="product-block__dialog-select-arrow" aria-hidden="true">
+                            <svg viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1L8 8L15 1" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
             {% endif %}
 
             {% comment %} Products whose options are neither colour nor size fall back to a plain variant list. {% endcomment %}
             {% unless color_option or size_option %}
                 {% if card_product.variants.size > 1 %}
-                    <label class="product-block__dialog-label" for="Variant-{{ dialog_id }}">Variant</label>
-                    <select
-                        class="product-block__dialog-select"
-                        id="Variant-{{ dialog_id }}"
-                        data-variant-select
-                    >
-                        {% for variant in card_product.variants %}
-                            <option
-                                value="{{ variant.id }}"
-                                {% unless variant.available %}disabled{% endunless %}
-                                {% if variant.id == current_variant.id %}selected{% endif %}
+                    <div class="product-block__dialog-field">
+                        <label class="product-block__dialog-label" for="Variant-{{ dialog_id }}">Variant</label>
+                        <div class="product-block__dialog-select-wrap">
+                            <select
+                                class="product-block__dialog-select"
+                                id="Variant-{{ dialog_id }}"
+                                data-variant-select
                             >
-                                {{ variant.title }} - {{ variant.price | money }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                                {% for variant in card_product.variants %}
+                                    <option
+                                        value="{{ variant.id }}"
+                                        {% unless variant.available %}disabled{% endunless %}
+                                        {% if variant.id == current_variant.id %}selected{% endif %}
+                                    >
+                                        {{ variant.title }} - {{ variant.price | money }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <span class="product-block__dialog-select-arrow" aria-hidden="true">
+                                <svg viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1L8 8L15 1" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
                 {% endif %}
             {% endunless %}
 
@@ -137,7 +163,10 @@
                 name="add"
                 {% unless card_product.available %}disabled{% endunless %}
             >
-                {% if card_product.available %}Add to cart{% else %}Sold out{% endif %}
+                <span class="product-block__dialog-submit-text">
+                    {% if card_product.available %}Add to cart{% else %}Sold out{% endif %}
+                </span>
+                {% render 'arrow-icon', color: '#ffffff', size: 40 %}
             </button>
         {% endform %}
 
